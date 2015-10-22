@@ -15,27 +15,27 @@
     <h1>Pokemon</h1>
 
     <section id="q1" class="question">
-        <h4>How many pokemons?</h4>
+        <h4>1. How many pokemons?</h4>
         <div class="answer"></div>
     </section>
 
     <section id="q2" class="question">
-        <h4>What is the avearge attack point?</h4>
+        <h4>2. What is the avearge attack point?</h4>
         <div class="answer"></div>
     </section>
 
     <section id="q3" class="question">
-        <h4>What are all the names?</h4>
+        <h4>3. What are all the names?</h4>
         <div class="answer"></div>
     </section>
 
     <section id="q4" class="question">
-        <h4>What is the name of the Pokemon with the highest attack point?</h4>
+        <h4>4. What is the name of the Pokemon with the highest attack point?</h4>
         <div class="answer"></div>
     </section>
 
     <section id="q5" class="question">
-        <h4>Which Pokemons are of the Grass type?</h4>
+        <h4>5. Which Pokemons are of the Grass type?</h4>
         <div class="answer"></div>
     </section>
 </div>
@@ -45,24 +45,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
     <script>
 
+// 1. How many pokemons are there?
 function solution1(data){
     return data.length
 }
 
+// 2. What is the average attack point?
 function solution2(data){
     return _.sum(_.pluck(data, 'Attack')) / data.length
 }
 
+// 3. What are all the names?
 function solution3(data){
     return _.pluck(data, 'Name').join(', ')
 }
 
+// 4. What is the name of the Pokemon with the highest Atatck Point?
 function solution4(data){
-    return 'TODO'
+    return _.max(data, 'Attack').Name
 }
 
+// 5. Which Pokemons are of the Grass type?
 function solution5(data){
-    return 'TODO'
+    return _.chain(data)
+      .filter({'Type': 'GRASS'})
+      .pluck('Name')
+      .value().join(', ')
 }
 
 function run(id, solutionFunc, data){
