@@ -1,0 +1,219 @@
+<html>
+<head>
+    <style>
+        .answer {
+            min-height: 50px
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/css/materialize.min.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Image Diffusion Analysis</h1>
+
+    <section id="q1" class="question">
+        <h4>1. How many unique original images?</h4>
+        (hint: use 'Image Id Str')
+        <div class="answer"></div>
+    </section>
+
+    <section id="q2" class="question">
+        <h4>2. How many unique original tweet users?</h4>
+        <div class="answer"></div>
+    </section>
+
+    <section id="q3" class="question">
+        <h4>3. How many times did image (592674938273865700) get retweeted?</h4>
+        (the answer should be 10. see if you can compute it)
+        <div class="answer"></div>
+    </section>
+
+    <section id="q4" class="question">
+        <h4>4. Which image has the most number of retweets?</h4>
+        (hint: use 'Image Id Str')
+        <div class="answer"></div>
+    </section>
+
+    <section id="q5" class="question">
+        <h4>5. How many original tweets were there on 4/26/15?</h4>
+        <div class="answer"></div>
+    </section>
+
+    <section id="q6" class="question">
+        <h4>6. Among these original tweets on 4/26/15, what is the most number of times one was retweeted?</h4>
+        <div class="answer"></div>
+    </section>
+
+    <section id="q7" class="question">
+        <h4>7. Among these original tweets on 4/26/15, what is the average number of times one was retweeted?</h4>
+        <div class="answer"></div>
+    </section>
+
+    <section id="q8" class="question">
+        <h4>8. Among these original tweets on 4/26/15, how many of them got retweeted within one hour?</h4>
+        <div class="answer"></div>
+    </section>
+
+    <section id="q9" class="question">
+        <h4>9. Among these original tweets on 4/26/15, what are the ten most retweeted?</h4>
+        <div class="answer"></div>
+    </section>
+
+    <section id="q10" class="question">
+        <h4>10. Among these ten most retweeted, how many of them contain images of people?</h4>
+        (hint: you will need to look at the photos yourself)
+        <div class="answer"></div>
+    </section>
+
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
+
+    <script src="/js/moment.min.js"></script>
+    <script>
+
+var items   // global scope (i.e., can be accessed in javascript console)
+
+// 1. How many unique, original images are in the data set?
+function solution1(){
+    return _.uniq(_.pluck(items, 'Image Id Str')).length
+}
+
+// 2. How many unique, original tweet users are in the data set?
+function solution2(){
+    return _.uniq(_.pluck(items, 'Original User Name')).length
+}
+
+// 3. How many times did the image, 592674938273865700, get retweeted?
+function solution3(){
+    return _.filter(items, { 'Image Id Str': 592674938273865700, 'Rt': 'Retweet'}).length
+}
+
+// 4. Which image had the most number of retweets?
+function solution4(){
+    return _.chain(items)
+                .filter({'Rt': 'Retweet'})
+                .groupBy('Image Id Str')
+                .mapValues(function(d) {return {'Image': d[0]['Image Id Str'], 'Count': d.length}})
+                .max('Count')
+                .value().Image
+}
+
+// 5. How many orginal tweets were there on 4/26/15?
+//    This solution assumes that the Image Id uniquely identifies an original tweet.
+function solution5(){
+    return _.chain(items)
+                .filter(function(d) {
+                    return _.includes(d['* Original Tweet Created At'], '4/26/15')
+                })
+                .groupBy('Image Id Str')
+                .size()
+                .value()
+}
+
+// 6. What is the maximum number of times that a tweet originating on 4/26/15 was retweeted?
+//    Assumes Image Id uniquely identifies an original tweet.
+function solution6(){
+    return _.chain(items)
+                .filter(function(d) {
+                    return _.includes(d['* Original Tweet Created At'], '4/26/15') 
+                        && d.Rt =='Retweet'
+                })
+                .groupBy('Image Id Str')
+                .mapValues(function(d) {return {'Count': d.length}})
+                .max('Count')
+                .value().Count
+}
+
+// 7. What is the average number of retweets for a tweet orginating on 4/26/15?
+//    Assumes Image Id uniquely identifies an original tweet.
+function solution7(){ 
+    var groups = _.chain(items)
+                    .filter(function(d) {
+                        return _.includes(d['* Original Tweet Created At'], '4/26/15') 
+                            && d.Rt =='Retweet'
+                    })
+                    .groupBy('Image Id Str')
+                    .mapValues(function(d) {return {'Count': d.length}})
+                    .value()
+
+    return _.sum(groups, 'Count')/_.size(groups)
+}
+
+// 8. How many tweets originating on 4/26/15 were retweeted within one hour?
+//    Assumes Image Id uniquely identifies an original tweet.
+function solution8(){
+    return _.chain(items)
+        .filter(function(d) {
+            if (_.includes(d['* Original Tweet Created At'], '4/26/15') 
+                && d.Rt == 'Retweet') {
+                var Original = moment(new Date(d['* Original Tweet Created At']))
+                var Current = moment(new Date(d['* Tweet Created At']))
+                return Current.isBefore(Original.add(1, 'h'))
+            } else      
+                return false})
+        .uniq('Image Id Str')
+        .value().length
+}
+
+// 9. What are the ten most retweeted tweets originating on 4/26/15?
+function solution9(){
+    return _.chain(items)
+        .filter(function(d) {  
+            return _.includes(d['* Original Tweet Created At'], '4/26/15') && d.Rt == 'Retweet'})
+        .groupBy('Image Id Str')
+        .sortBy(function(g) { return -g.length })
+        .take(10)
+        .map(function(g) { return g[0]['Image Id Str'] })
+        .value().join(', ')
+}
+
+// 10. How many of the images in the ten most retweeted tweets include people?
+function solution10(){
+    // People can be seen in photos 1, 5, 6, 7 and 10.
+    return 5
+}
+
+function run(id, solutionFunc, data){
+    console.log('run solution for ' + id)
+    var answer = solutionFunc(data)
+    $(id).find('.answer').html(answer)
+}
+
+function loadDataThenRunSolutions(){
+    $.get({url: './nepal_local_tweets.json'})
+     .done(function(data){
+        //  var lines = data.trim().split('\n')
+        items = data
+         // convert text lines to json arrays and save them in `items`
+        //  items = _.map(lines, JSON.parse)
+
+         console.log('number of items loaded:', items.length)
+         console.log('first item', items[0])
+
+         run('#q1', solution1, items)
+         run('#q2', solution2, items)
+         run('#q3', solution3, items)
+         run('#q4', solution4, items)
+         run('#q5', solution5, items)
+         run('#q6', solution6, items)
+         run('#q7', solution7, items)
+         run('#q8', solution8, items)
+         run('#q9', solution9, items)
+         run('#q10', solution10, items)
+     })
+     .fail(function(err){
+         console.error(err)
+     })
+}
+
+loadDataThenRunSolutions()
+
+    </script>
+
+</body>
+</html>
