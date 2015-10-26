@@ -29,17 +29,17 @@
     <h3>Questions</h3>
 
     <section id="q1" class="question">
-        <h4>Where are all the McDonloads in Phoenix?</h4>
+        <h4>1. Where are all the McDonalds in Phoenix?</h4>
         <div class="answer"></div>
     </section>
 
     <section id="q2" class="question">
-        <h4>Where are all the Starbucks in Phoenix?</h4>
+        <h4>2. Where are all the Starbucks in Phoenix?</h4>
         <div class="answer"></div>
     </section>
 
     <section id="q3" class="question">
-        <h4>Where are all the McDonloads and Starbucks in Phoenix?</h4>
+        <h4>3. Where are all the McDonalds and Starbucks in Phoenix?</h4>
         <ul>
             <li>McDonloads (blue circles)</li>
             <li>Starbucks (green circles)</li>
@@ -48,7 +48,7 @@
     </section>
 
     <section id="q4" class="question">
-        <h4>What are the star ratings of a sample of 200 businesses in Phonenix?</h4>
+        <h4>4. What are the star ratings of a sample of 200 businesses in Phoenix?</h4>
         <ul>
             <li>represent star rating using the brightness of red</li>
         </ul>
@@ -57,7 +57,7 @@
 
 
     <section id="q5" class="question">
-        <h4>How are Starbucks located with respect to the city center of Phonenix?</h4>
+        <h4>5. How are Starbucks located with respect to the city center of Phonenix?</h4>
         <ul>
             <li>draw a line from each Starbucks to the city center</li>
         </ul>
@@ -65,7 +65,7 @@
     </section>
 
     <section id="q6" class="question">
-        <h4>How is the distance from the city center related to the number of reviews?</h4>
+        <h4>6. How is the distance from the city center related to the number of reviews?</h4>
         <ul>
             <li>same as above, but represent the number of reviews using the size of each circle</li>
         </ul>
@@ -73,7 +73,7 @@
     </section>
 
     <section id="q7" class="question">
-        <h4>Where are good restaurants in Phoenix?</h4>
+        <h4>7. Where are good restaurants in Phoenix?</h4>
         <ul>
             <li>a restaurant is a business that belongs to the "Restaurants" category</li>
             <li>a good restaurant is defined as one with at least 3.5 star ratings and at least 5 reviews</li>
@@ -82,7 +82,7 @@
     </section>
 
     <section id="q8" class="question">
-        <h4>What are the open/close statues of good restaurants in Phoenix?</h4>
+        <h4>8. What are the open/close statuses of good restaurants in Phoenix?</h4>
         <ul>
             <li>based on the previous map, mark open using green, close using red</li>
         </ul>
@@ -90,7 +90,7 @@
     </section>
 
     <section id="q9" class="question">
-        <h4>What are the UPS stores and what are their coverages?</h4>
+        <h4>9. What are the UPS stores and what are their coverages?</h4>
         <ul>
             <li>coverage is defined as within a 5000 meter radius</li>
         </ul>
@@ -98,7 +98,7 @@
     </section>
 
     <section id="q10" class="question">
-        <h4>Where are McDonald's and Burger Kings competing nearby?</h4>
+        <h4>10. Where are McDonald's and Burger Kings competing nearby?</h4>
         <ul>
             <li>nearby is defined as within 1000 meters</li>
         </ul>
@@ -110,9 +110,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
     <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
-
     <script>
 
+// Where is Phoenix?
 function example1(){
     var map = L.map($('#ex1 .answer')[0]).setView([33.45, -112.06], 8)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -126,6 +126,7 @@ function example1(){
     L.marker(latlng).addTo(map)
 }
 
+// Where are the first 100 businesses in Phoenix?
 function example2(){
     var map = L.map($('#ex2 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -145,7 +146,7 @@ function example2(){
     })
 }
 
-
+// 1. Where are all the McDonald's in Phoenix?
 function solution1(){
     var map = L.map($('#q1 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -155,9 +156,15 @@ function solution1(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
+    var mcdonalds = _.filter(items, {city: 'Phoenix', name: "McDonald's"})
+
+     _.forEach(mcdonalds, function(d){
+        var latlng = [d['latitude'], d['longitude']]
+        L.marker(latlng).addTo(map)
+    })    
 }
 
+// 2. Where are all the Starbucks in Phoenix?
 function solution2(){
     var map = L.map($('#q2 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -167,9 +174,15 @@ function solution2(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
+    var starbucks = _.filter(items, {city: 'Phoenix', name: "Starbucks"})
+
+     _.forEach(starbucks, function(d){
+        var latlng = [d['latitude'], d['longitude']]
+        L.marker(latlng).addTo(map)
+    })    
 }
 
+// 3. Where are all the McDonald's and Starbucks in Phoenix?
 function solution3(){
     var map = L.map($('#q3 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -179,14 +192,29 @@ function solution3(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
-    var circle = L.circle([33.45, -112.06], 500, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5
-    }).addTo(map);
+    var starbucks = _.filter(items, {city: 'Phoenix', name: "Starbucks"})
+    var mcdonalds = _.filter(items, {city: 'Phoenix', name: "McDonald's"})
+
+     _.forEach(starbucks, function(d){
+        var latlng = [d['latitude'], d['longitude']]
+        var circle = L.circle(latlng, 500, {
+            color: 'green',
+            fillColor: 'green',
+            fillOpacity: 0.5
+        }).addTo(map);
+    })
+
+    _.forEach(mcdonalds, function(d){
+        var latlng = [d['latitude'], d['longitude']]
+        var circle = L.circle(latlng, 500, {
+            color: 'blue',
+            fillColor: 'blue',
+            fillOpacity: 0.5
+        }).addTo(map); 
+    })   
 }
 
+// 4. What are the star ratings of a sample of 200 businesses in Phoenix?
 function solution4(){
     var map = L.map($('#q4 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -196,14 +224,23 @@ function solution4(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
-    var circle = L.circle([33.45, -112.06], 500, {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5
-    }).addTo(map);
+    var itemsInPhoenix = _.filter(items, {'city': 'Phoenix'})
+    var first200Items = _.take(itemsInPhoenix, 200)
+
+    var reds = ['#ff0000', '#f00000', '#e00000', '#d00000', '#c00000', '#b00000', '#a00000', '#900000', '#800000', '#700000', '#600000']
+
+    _.forEach(first200Items, function(d){
+        var latlng = [d['latitude'], d['longitude']]
+        var color = reds[parseInt(d.stars/.5)]
+        var circle = L.circle(latlng, 100, {
+            color: color,
+            fillColor: color,
+            fillOpacity: 1.0
+        }).addTo(map);
+    })
 }
 
+// 5. How are the Starbucks located with respect to the city center?
 function solution5(){
 
     // city center
@@ -217,25 +254,29 @@ function solution5(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO: modify the code below to develop your solution
+    var starbucksInPhoenix = _.filter(items, {city: 'Phoenix', name: 'Starbucks'})
 
-    var itemsInPhoenix = _.filter(items, {'city': 'Phoenix'})
+    // draw a circle on the city center
+    L.circle(cityCenterLatLng, 500, {color: 'blue'}).addTo(map);
 
-    // draw a line connecting the first two items
-    var latlng1 = [itemsInPhoenix[0].latitude, itemsInPhoenix[0].longitude]
-    var latlng2 = [itemsInPhoenix[1].latitude, itemsInPhoenix[1].longitude]
-    var latlngs = [latlng1, latlng2]
-    var polyline = L.polyline(latlngs, {color: 'yellow'}).addTo(map);
+    _.forEach(starbucksInPhoenix, function(d){
+        var latlng = [d['latitude'], d['longitude']]
 
-    // draw a circle on the first item
-    L.circle(latlng1, 500, {color: 'red'}).addTo(map);
-    L.circle(latlng2, 500, {color: 'blue'}).addTo(map);
+        // draw a line connecting the Starbucks to the City Center
+        var latlngs = [cityCenterLatLng, latlng]
+        var polyline = L.polyline(latlngs, {color: 'yellow'}).addTo(map);
+
+        // draw a circle on the Starbucks
+        L.circle(latlng, 500, {color: 'red'}).addTo(map);
+    })
 }
 
+// 6. How is the distance from the city center related to the number of reviews?
 function solution6(){
     // city center
     var cityCenterLatLng = [33.45, -112.06]
 
+    // Generate base map
     var map = L.map($('#q6 .answer')[0]).setView(cityCenterLatLng, 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a       href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
@@ -244,8 +285,34 @@ function solution6(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
+    // Gather all Phoenix Starbucks entries and sort by review count
+    var starbucksInPhoenix = _.chain(items)
+        .filter({city: 'Phoenix', name: 'Starbucks'})
+        .sortBy('review_count')
+        .value()
+
+    // Calculate minimum and maximum review counts
+    var minReviewCount = starbucksInPhoenix[0].review_count
+    var maxReviewCount = starbucksInPhoenix[starbucksInPhoenix.length-1].review_count
+
+    // draw a circle on the city center
+    L.circle(cityCenterLatLng, 500, {color: 'blue'}).addTo(map);
+
+    _.forEach(starbucksInPhoenix, function(d){
+        var latlng = [d['latitude'], d['longitude']]
+
+        // draw a line connecting the Starbucks to the City Center
+        var latlngs = [cityCenterLatLng, latlng]
+        var polyline = L.polyline(latlngs, {color: 'yellow'}).addTo(map)
+
+        // draw a circle on the Starbucks
+        var size = d.review_count * 1000 / maxReviewCount
+        L.circle(latlng, size, {color: 'red'}).addTo(map)
+    })
+
 }
 
+// 7. Where are the good restaurants in Phoenix?
 function solution7(){
     var map = L.map($('#q7 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -255,9 +322,17 @@ function solution7(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
+    _.chain(items)
+        .filter(function(d) {
+            return d.city == 'Phoenix' && _.includes(d.categories, 'Restaurants') && 
+                d.stars >= 3.5 && d.review_count >= 5
+        }).forEach(function(d){
+            var latlng = [d['latitude'], d['longitude']]
+            L.marker(latlng).addTo(map)
+        }).value()    
 }
 
+// 8. What are the open/close statuses of good restaurants in Phoenix?
 function solution8(){
     var map = L.map($('#q8 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -267,9 +342,18 @@ function solution8(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
+    _.chain(items)
+        .filter(function(d) {
+            return d.city == 'Phoenix' && _.includes(d.categories, 'Restaurants') && 
+                d.stars >= 3.5 && d.review_count >= 5
+        }).forEach(function(d){
+            var latlng = [d['latitude'], d['longitude']]
+            color = d.open ? 'green' : 'red'
+            L.circle(latlng, 500, {color: color}).addTo(map)
+        }).value()    
 }
 
+// 9. What are the UPS stores and what is their coverage?
 function solution9(){
     var map = L.map($('#q9 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -279,9 +363,14 @@ function solution9(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
+    _.chain(items)
+        .filter({name:'The UPS Store'})
+        .forEach(function(d){
+            L.circle([d.latitude, d.longitude], 5000, {color: 'red'}).addTo(map)
+        }).value()  
 }
 
+// 10. Where are McDonald's and Burger King competing, nearby?
 function solution10(){
     var map = L.map($('#q10 .answer')[0]).setView([33.45, -112.06], 11)
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -291,7 +380,17 @@ function solution10(){
         accessToken: 'pk.eyJ1IjoiZG91Ymxlc2hvdyIsImEiOiJjaWZ5Y3B1eTE1MHRidWRtMG9uZXluajg4In0.u5ONW27Ly5cU7M5KYi6Y9Q'
     }).addTo(map)
 
-    // TODO
+    _.chain(items)
+        .filter({name: "McDonald's"})
+        .forEach(function(m) {
+             L.circle([m.latitude, m.longitude], 1000, {color: 'red'}).addTo(map)
+        }).value()
+
+    _.chain(items)
+        .filter({name: "Burger King"})
+        .forEach(function(b) {
+             L.circle([b.latitude, b.longitude], 1000, {color: 'blue'}).addTo(map)
+        }).value()
 }
 
 var items = []
