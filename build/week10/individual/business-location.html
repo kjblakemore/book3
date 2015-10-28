@@ -47,34 +47,66 @@ function getCandidateLocations(){
   return locations
 }
 
+// Returns an array of businesses within distance miles from
+// location.
+function nearbyBusinesses(location, distance){
+ return _.filter(items, function(item){
+    var loc2  = _.pick(item, ['latitude', 'longitude'])
+    var d = geolib.getDistance(location, loc2)
+    return geolib.convertUnit('mi', d) <  distance
+  })
+}
 
 //
-// Scoring Functions
+// Scoring Functions to determine best location for a cinema.
 //
 
-function has_some_feature_1(loc){
-  // TODO
-  return true
+// 1. No other cinemas closeby.
+function has_no_cinemas_nearby(loc){
+  var businesses = nearbyBusinesses(loc, 14)
+  console.log('businesses', businesses)
+  var cinemas = _.filter(businesses, function (d) {
+    return _.includes(d.categories, 'Cinema')
+  })
+  return cinemas.length == 0
 }
 
-function has_some_feature_2(loc){
-  // TODO
-  return false
+// 2. Has restaurants nearby
+function has_restaurants_nearby(loc){
+  var businesses = nearbyBusinesses(loc, .25)
+  var restaurants = _.filter(businesses, function (d) {
+    return _.includes(d.categories, 'Restaurants')
+  })
+  return restaurants.length > 0
 }
 
-function has_some_feature_3(loc){
-  // TODO
-  return true
+// 3. Has lodging nearby
+function has_lodging_nearby(loc){
+  var businesses = nearbyBusinesses(loc, .25)
+  var lodging = _.filter(businesses, function (d) {
+    return _.intersection(d.categories, 
+      ['Bed & Breakfast', 'Guest House', 'Hostel', 'Hotel',
+       'Hotel', 'Ski Resort', 'Vacation Rental']) != null
+  })
+  return lodging.length > 0
 }
 
-function has_some_feature_4(loc){
-  // TODO
-  return false
+// 4. Has food businesses nearby
+function has_food_businesses_nearby(loc){
+  var businesses = nearbyBusinesses(loc, .5)
+  var food = _.filter(businesses, function (d) {
+    return _.includes(d.categories, 'Food')
+  })
+  return food.length > 0
 }
 
-function has_some_feature_5(loc){
-  // TODO
-  return false
+// 5. Has shopping nearby.
+function has_shopping_nearby(loc){
+  var businesses = nearbyBusinesses(loc, .5)
+  var shopping = _.filter(businesses, function (d) {
+    return _.includes(d.categories, 'Shopping')
+  })
+  return shopping.length > 0
 }
 
 //
@@ -175,11 +207,11 @@ function loadDataThenRunSolutions(){
 
       console.log('scoring all candidate locations')
 
-      scoreAndVisualize(locs, has_some_feature_1, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_2, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_3, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_4, visualize_true_or_false)
-      scoreAndVisualize(locs, has_some_feature_5, visualize_true_or_false)
+      scoreAndVisualize(locs, has_no_cinemas_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, has_restaurants_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, has_lodging_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, has_food_businesses_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, has_shopping_nearby, visualize_true_or_false)
 
    })
    .fail(function(err){
