@@ -136,7 +136,7 @@ function has_a_restaraunt_that_is_good_for_breakfast_within_1_mile(loc){
   return rest.length > 0
 }
 
-//#6 has no childcare within 15km radius
+//#6 has no childcare within 2 mi radius
 function has_no_childcare_within_2_miles(loc){
     var nearbyBusinesses = _.filter(items, function(item){
         var loc2  = _.pick(item, ['latitude', 'longitude'])
@@ -146,7 +146,7 @@ function has_no_childcare_within_2_miles(loc){
     var S = _.filter(nearbyBusinesses, function(x){
         return _.contains(x['categories'], 'Child Care & Day Care')
     })
-    return S.length > 0
+    return S.length == 0
 }
 
 // 7. Are there Adult Entertainment businesses within one mile?
