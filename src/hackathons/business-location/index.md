@@ -84,7 +84,7 @@ Adult entertainment businesses would not be conducive to a safe environment.
 ##### 8. Does the location have no fast food within one mile? Contributed by  Karen
 Fast food locations would indicate a commercial environment and we are looking for a more residential setting.
 ##### 9. Does the location have urgent care pediatricians with greater than 4 stars rating within  3 miles? Contributed by Ming
-f a child needs urgent medical care while in school, having a pediatrician that could be reached quickly is important.
+If a child needs urgent medical care while in school, having a pediatrician that could be reached quickly is important.
 ##### 10. Does the location have at least one hipster wine bar within 5 miles? Contributed by  Brian
 Just in case the parent needs to relax a bit just before picking up the child.
 ##### 11. Does the location have no late night businesses within one fourth mile? Contributed by Karen 
@@ -92,5 +92,5 @@ Businesses which are open 24 hours or close after 12 pm, could indicate an unsaf
 
 ### Conclusion
 
-Our team collectively has implemented 11 scoring functions. Based on
-the scores, our team recommends location 5 which received 7 out of 11 points. 
+Our team collectively implemented 11 scoring functions. Based on
+the scores, our team recommends location 2 or 3 which both scored 7 out of 11 points.  These locations differ in that location 2 is near elementary schools but also close to late night businesses, whereas location 3 is not near elementary schools nor late night businesses.  We recommend that the business developer investigate the types of late night businesses near location 2, before making a final decision.
