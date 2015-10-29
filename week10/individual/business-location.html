@@ -12,7 +12,7 @@
 
 <div class="container">
 
-    <h1>Where should we build X?</h1>
+    <h1>Where should we build a new Cinema?</h1>
 
     <section id="candidates" class="question">
         <h4>Where are the candidate locations?</h4>
@@ -33,22 +33,22 @@
     <script>
 
 //
-// Candidate Locations
+// Candidate Locations - create an M by N grid of locations 
+// starting at origin = [longitude, latitude]
 //
-
-function getCandidateLocations(){
+function getCandidateLocations(origin, m, n){
   var locations = []
-  locations.push({latitude: 33.45, longitude: -112.03})
-  locations.push({latitude: 33.45, longitude: -112.04})
-  locations.push({latitude: 33.45, longitude: -112.05})
-  locations.push({latitude: 33.45, longitude: -112.06})
-  locations.push({latitude: 33.45, longitude: -112.07})
-  locations.push({latitude: 33.45, longitude: -112.08})
+  _.range(origin[0], origin[0] + .01 * (m-1), .01).forEach(function(lat) {
+    _.range(origin[1], origin[1] + .01 * (n-1), .01).forEach(function(lng) {
+      locations.push({latitude: _.round(lat, 2), longitude: _.round(lng, 2)})
+    })
+  })
   return locations
 }
 
-// Returns an array of businesses within distance miles from
-// location.
+//
+// Returns an array of businesses within distance miles from location.
+//
 function nearbyBusinesses(location, distance){
  return _.filter(items, function(item){
     var loc2  = _.pick(item, ['latitude', 'longitude'])
@@ -57,14 +57,21 @@ function nearbyBusinesses(location, distance){
   })
 }
 
+// 
+// Returns a list of nearby businesses for each location.
+//
+function getNearbyBusinesses(locations, distance) {
+  return _.map(locations, function(loc) {
+    return nearbyBusinesses(loc, distance)
+  })
+}
+
 //
 // Scoring Functions to determine best location for a cinema.
 //
 
 // 1. No other cinemas closeby.
-function has_no_cinemas_nearby(loc){
-  var businesses = nearbyBusinesses(loc, 14)
-  console.log('businesses', businesses)
+function has_no_cinemas_nearby(loc, businesses){
   var cinemas = _.filter(businesses, function (d) {
     return _.includes(d.categories, 'Cinema')
   })
@@ -72,8 +79,7 @@ function has_no_cinemas_nearby(loc){
 }
 
 // 2. Has restaurants nearby
-function has_restaurants_nearby(loc){
-  var businesses = nearbyBusinesses(loc, .25)
+function has_restaurants_nearby(loc, businesses){
   var restaurants = _.filter(businesses, function (d) {
     return _.includes(d.categories, 'Restaurants')
   })
@@ -81,8 +87,7 @@ function has_restaurants_nearby(loc){
 }
 
 // 3. Has lodging nearby
-function has_lodging_nearby(loc){
-  var businesses = nearbyBusinesses(loc, .25)
+function has_lodging_nearby(loc, businesses){
   var lodging = _.filter(businesses, function (d) {
     return _.intersection(d.categories, 
       ['Bed & Breakfast', 'Guest House', 'Hostel', 'Hotel',
@@ -92,8 +97,7 @@ function has_lodging_nearby(loc){
 }
 
 // 4. Has food businesses nearby
-function has_food_businesses_nearby(loc){
-  var businesses = nearbyBusinesses(loc, .5)
+function has_food_businesses_nearby(loc, businesses){
   var food = _.filter(businesses, function (d) {
     return _.includes(d.categories, 'Food')
   })
@@ -101,8 +105,7 @@ function has_food_businesses_nearby(loc){
 }
 
 // 5. Has shopping nearby.
-function has_shopping_nearby(loc){
-  var businesses = nearbyBusinesses(loc, .5)
+function has_shopping_nearby(loc, businesses){
   var shopping = _.filter(businesses, function (d) {
     return _.includes(d.categories, 'Shopping')
   })
@@ -113,10 +116,12 @@ function has_shopping_nearby(loc){
 // Compute a score for a location using the provided scoring function 'scoreFunc'
 // and visualization function 'vizFunc'
 //
-function scoreAndVisualize(locs, scoreFunc, vizFunc){
+function scoreAndVisualize(locs, businesses, scoreFunc, vizFunc){
 
   console.time('scoring ' + scoreFunc.name)
-  var scores = _.map(locs, scoreFunc)
+  var scores = _.map(locs, function(loc, i) {
+    return scoreFunc(loc, businesses[i])
+  })
   console.timeEnd('scoring ' + scoreFunc.name)
 
   var title = _.startCase(scoreFunc.name)
@@ -188,7 +193,7 @@ function visualize_true_or_false(domElement, locs, scores){
 var items = []
 function loadDataThenRunSolutions(){
 
-  var locs = getCandidateLocations()
+  var locs = getCandidateLocations([33.44, -112.10], 4, 10)
   visualize($('#candidates .map')[0], locs)
 
   $.get({url: 'http://bigdatahci2015.github.io/data/yelp/yelp_academic_dataset_business.phoenix.json.lines.txt'})
@@ -200,18 +205,21 @@ function loadDataThenRunSolutions(){
 
       // take only the last 2000 to speed up computation
       // TODO: comment this out before the final submission
-      items = _.takeRight(items, 2000)
+      // items = _.takeRight(items, 2000)
 
       console.log('number of items loaded:', items.length)
       console.log('first item:', items[0])
 
       console.log('scoring all candidate locations')
 
-      scoreAndVisualize(locs, has_no_cinemas_nearby, visualize_true_or_false)
-      scoreAndVisualize(locs, has_restaurants_nearby, visualize_true_or_false)
-      scoreAndVisualize(locs, has_lodging_nearby, visualize_true_or_false)
-      scoreAndVisualize(locs, has_food_businesses_nearby, visualize_true_or_false)
-      scoreAndVisualize(locs, has_shopping_nearby, visualize_true_or_false)
+      var businesses = getNearbyBusinesses(locs, 2)
+      scoreAndVisualize(locs, businesses, has_no_cinemas_nearby, visualize_true_or_false)
+
+      var businesses = getNearbyBusinesses(locs, .25)
+      scoreAndVisualize(locs, businesses, has_restaurants_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, businesses, has_lodging_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, businesses, has_food_businesses_nearby, visualize_true_or_false)
+      scoreAndVisualize(locs, businesses, has_shopping_nearby, visualize_true_or_false)
 
    })
    .fail(function(err){
