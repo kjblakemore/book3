@@ -48,7 +48,7 @@
       <div id="questions" class="collection with-header">
           <div class="collection-header">Questions</div>
           <section id="q1" class="question collection-item">
-              <h4>What is the relationship between number of followers and number of retweets? (contributed by Brian)</h4>
+              <h4>What is the relationship between number of followers and number of retweets? (contributed by Brian McKean)</h4>
               <div class="answer"></div>
           </section>
 
@@ -58,23 +58,20 @@
           </section>
 
           <section id="q3" class="question collection-item">
-              <h4>Do tweets from influential tweeters live longer? (contributed by Karen)</h4>
-              <h5>The chart below shows how the lifespans of tweets vary based on the number of
-                  followers of the original tweet.</h5>
+              <h4>Do tweets from influential tweeters live longer? (contributed by Karen Blakemore)</h4>
+              <h5>The chart below shows how the lifespan of an image varies based on the number of
+                  followers of the original tweeter, with an origin at the upper left corner.</h5>
 
-              <h5>Each data point represents a unique image in the dataset, for all images where the originating
-                  tweet is also in the data set.  There are 429 total unique images in the data set.  Of these, 186
-                  also have the originating tweet in the data set.</h5>
-
-              <h5>The origin of the chart is the upper left corner.</h5>
+              <h5>For all images where the originating
+                  tweet is also in the data set, you can see a point on the graph.  There are 186 points on the graph.</h5>
 
               <h5>The x-axis is the tweet lifespan and ranges from
-                  0 to 127,816,000 seconds which is 148 days.  106 of the datapoints have an x-coordinate value of zero,
-                  indicating a zero lifespan. Twenty of these are due to errors in the dataset, the images of which are listed
-                  in the Discussion section.  The remaining 86 represent tweets that were not re-tweeted.</h5>
+                  0 to 127,816,000 seconds which is 148 days.  Where there is more than one tweet originating an image, the
+                  lifespan is measured from the oldest tweet.  105 of the datapoints have an x-coordinate of zero,
+                  indicating that the corresponding image was not retweeted.</h5>
 
-              <h5>The y-axis is the number of followers
-                  of the original tweet.  It ranges from 1 to 74,383.</h5>
+              <h5>The y-axis is the sum of all the followers
+                  of the original tweeters.  It ranges from 1 to 74,383.</h5>
               <div class="answer"></div>
           </section>
       </div>
@@ -93,27 +90,32 @@
 
 # Findings, Recommendations and Future Work
 
-## Follower Counts Influence on Diffusion
-The findings related to follower counts were inconclusive, due to the small number of valid originating tweets which were retweeted.  There were 80 of
-these in the data set.  We have the following recommendations for increasing the number of originating tweets which are retweeted:
-1. Repair the invalid tweets listed below.
-2. Add missing orginator tweets.  Can this be done by searching twitter using the Image Id?
-3. Add retweets.  Can this be done by searching twitter using the Image Id?
+## Local vs. International Reweets
+The percentage of local tweets which are retweets is 86.5%, whereas the international percentage is
+97.7%.  This indicates that tweets sent from Nepal are more likely to be original tweets than tweets sent from
+outside of Nepal.
 
-## Invalid Original Tweets
-Twenty of the original tweets are incorrect.  The image is either listed as origniating
-from multiple tweets, or the originating tweet date is greater than the retweet date.
-The following images have invalid originating tweets:
+## Association between Follower Count and Diffusion
+The analysis shows a relationship between the orginator follower count and the number of
+retweets.  The association with image lifespan is less conclusive.
 
-592149979889819600, 592152575081893900,
-592139111860940800, 592285978557075500, 592613449072386000, 592108721112649700, 592531951036293100,
-592228035023114200, 592841349373816800, 592530513098707000, 592278192796241900, 592384635738333200,
-592672314648559600, 592235421192593400, 592576416144818200, 592573636696899600, 592228580630868000,
-592268981471424500, 592762668018225200, 592778296284323800
+We wonder how representative the data set is
+of the image tweet stream.  A large proportion of the images (243/429) did not have the originating tweet
+in the data set.  Of those images which did have the originating tweet in the data set, a large proportion (105/186) were
+not retweeted.
 
-## Future Follower Count Work
-1. Analyze the influence of retweeter's follower count on the diffusion of tweets.
-2. Consider a shorter time span for study, as the benefit of disaster news dissipates after a few days.
+It is our understanding that
+the tweets were collected based on keywords and hashtags.  If the originating tweet was sent before the collection started,
+it would not be included in the data set.  Because of
+this, we recommend attempting to gathering additional tweets of the images from the Twitter database, using the image id,
+if this is possible.
+
+As follow-up work, we suggest a similar analysis of the retweeters' follower count and its influence on image diffusion.
+
+We also recommend viewing a sample of images from the data set to determine if there is commonality between those that were
+retweeted and those which were not.
+
+<ul type="disc">
     </div>
   </div>
 
@@ -128,6 +130,7 @@ var items   // global scope (i.e., can be accessed in javascript console)
 
 function solution1(){
     // Find relationship between number of followers and number of retweet
+
     // Get original tweets
     var ot = _.filter(items,function(d){
         return d['Rt'] != "Retweet"
@@ -136,17 +139,29 @@ function solution1(){
     var otfollow = _.sortBy(ot, function(d){
         return -d['User Followers Count']
     })
-    var z1 = _.take(otfollow, 20)
-
+    num = 30
+    var z1 = _.take(otfollow, num)
+    // Get retweets
     var rt = _.filter(items,function(d){
         return d['Rt'] == "Retweet"
     })
-    var otrt = _.groupBy(rt,'* Original Tweet Created At')
+    // Dataset is not complete so filter retweet counts to only those with
+    // orinal tweets in the dataset
+    var rto = _.filter(rt, function(d){
+	x = _.find(ot, function(e){
+            y = d['* Original Tweet Created At'] == e['* Tweet Created At']
+	    return y
+	})
+	return x
+    })
+    console.log(rt.length)
+    console.log(rto.length)
+    var otrt = _.groupBy(rto,'* Original Tweet Created At')
     console.log(otrt)
     var y3 = _.sortBy(otrt, function(d){
         return -d.length
     })
-    var z2 = _.take(y3,20)
+    var z2 = _.take(y3,num)
     bothLists = _.filter(z1, function(d){
         match = _.find(z2, function(e){
             return e[0]['* Original Tweet Created At'] == d['* Tweet Created At']
@@ -155,7 +170,7 @@ function solution1(){
     })
     console.log(bothLists)
 
-    answer = 'There are '+bothLists.length+' tweets on the top twenty lists for both number of followers and number of retweets'
+    answer = 'We found a correlation between follower count and the number of retweets.  There are '+bothLists.length+' tweets on the top '+num+' lists for both number of followers and number of retweets'
     return answer
 }
 
@@ -213,35 +228,43 @@ function solution3(){
     // compile the string to get a template function
     var template = _.template(tplString)
 
+    // Group tweets by the image id
     var groups = _.groupBy(items, 'Image Id Str')
 
     console.log('groups', groups)
 
     // Find original tweets
     var images = _.mapValues(groups, function(tweets) {
-        var originalTweet = _.find(tweets, {'* Original Tweet Created At': ''})
+        // A single image could originate from multiple tweets.
+        originalTweets = _.filter(tweets, {'* Original Tweet Created At': ''})
 
-        var followers = null
-        var lifespan = -1
-        if (originalTweet) {
-            // Followers count of orignal tweet
-            var followers = originalTweet['User Followers Count']
+        if (originalTweets) {
+            // Followers count is the sum of follower counts for all orignal tweets
+            followers = _.sum(_.pluck(originalTweets, 'User Followers Count'))
 
-            // lifespan of tweet
-            var birth = Date.parse(originalTweet['* Tweet Created At'])
-            var death = _.max(tweets, function(tweet) {
+            // lifespan of tweet = death (maximum retweet date)
+            // - birth (minimum creation date).
+            birth = _.min(originalTweets, function(tweet) {
+                return Date.parse(tweet['* Tweet Created At'])
+            })
+            death = _.max(tweets, function(tweet) {
                  return Date.parse(tweet['* Tweet Created At'])
             })
 
-            lifespan = Date.parse(death['* Tweet Created At']) - birth
-        }
-        return [lifespan, followers]
+            lifespan = Date.parse(death['* Tweet Created At'])
+                - Date.parse(birth['* Tweet Created At'])
+            return [lifespan, followers]
+        } else return [-1, 0]
     })
 
     // Extract entries with original tweet in data set
     var filteredImages = _.filter(_.values(images), function(image) {
-        return image[0] != -1
+        return image[0] >= 0
     })
+
+    var noLife = _.filter(_.values(images), function(image) {
+        return image[0] == 0
+    }).length
 
     var unzippedFilteredImages = _.unzip(filteredImages)
     var maxLifespan = _.max(unzippedFilteredImages[0])
