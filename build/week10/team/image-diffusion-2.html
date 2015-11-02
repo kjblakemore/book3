@@ -58,7 +58,7 @@
           </section>
 
           <section id="q3" class="question collection-item">
-              <h4>Do tweets from influential tweeters live longer? (contributed by Karen Blakemore)</h4>
+              <h4>Do images from influential tweeters live longer? (contributed by Karen Blakemore)</h4>
               <h5>The chart below shows how the lifespan of an image varies based on the number of
                   followers of the original tweeter, with an origin at the upper left corner.</h5>
 
@@ -67,7 +67,8 @@
 
               <h5>The x-axis is the tweet lifespan and ranges from
                   0 to 127,816,000 seconds which is 148 days.  Where there is more than one tweet originating an image, the
-                  lifespan is measured from the oldest tweet.  105 of the datapoints have an x-coordinate of zero,
+                  lifespan is measured from the oldest tweet.  In eighteen cases, there was an originating tweet for an
+                  image, but its' date was greater than that of the retweet.  105 of the datapoints have an x-coordinate of zero,
                   indicating that the corresponding image was not retweeted.</h5>
 
               <h5>The y-axis is the sum of all the followers
@@ -272,12 +273,12 @@ function solution3(){
 
     // X coordinate is the scaled time
     function computeX(d, i) {
-        return 600 * d[0]/maxLifespan + 10
+        return 700 * d[0]/maxLifespan + 10
     }
 
     // Y coordinate is the scaled follower count
     function computeY(d, i) {
-        return 200 * 10 * d[1]/maxFollowers + 10
+        return 180 * 10 * d[1]/maxFollowers + 10
     }
 
     var viz = _.map(filteredImages, function(d, i){
