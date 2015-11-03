@@ -94,12 +94,10 @@ correctly, and also what other teams are up to in real-time.
 
 The team members who contributed to this hackathon are:
 
-- (Name)
-- (Name)
-- (Name)
-- (Name)
-- (Name)
-- (Name)
+- Karen Blakemore
+- Brian McKean
+- Mingqi Liew
+- Matt Schroeder
 
 ## Grading
 
