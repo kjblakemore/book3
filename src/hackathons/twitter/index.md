@@ -96,8 +96,6 @@ The team members who contributed to this hackathon are:
 
 - Karen Blakemore
 - Brian McKean
-- Mingqi Liew
-- Matt Schroeder
 
 ## Grading
 
@@ -107,16 +105,10 @@ Each person must implement at least ONE detector function. It must be meaningful
 
 Our team came up with the following interesting events:
 
-1. Has observed .... ? contributed by (Name)
+1. Has observed languages other than English and Russian? contributed by Karen
 
-  (one sentence justification why this event is interesting)
+  The predominant language used in tweets is English and we are collecting tweets
+  with the term Russia, so I would think that languages other than English would
+  be very rare.
 
-1. Has observed .... ? contributed by (Name)
-
-  (one sentence justification why this event is interesting)
-
-1. Has observed .... ? contributed by (Name)
-
-  (one sentence justification why this event is interesting)
-
-(add more until you hit N where N is the number of people on your team)
+2. Has observed the word Putin? contributed by Brian.
