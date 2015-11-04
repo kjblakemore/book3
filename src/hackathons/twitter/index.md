@@ -108,7 +108,7 @@ Our team came up with the following interesting events:
 1. Has observed languages other than English and Russian? contributed by Karen
 
   The predominant language used in tweets is English and we are collecting tweets
-  with the term Russia, so I would think that languages other than English would
+  with the term Russia, so I would think that languages other than English and Russian would
   be very rare.
 
 2. Has observed the word Putin? contributed by Brian.
