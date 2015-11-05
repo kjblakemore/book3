@@ -14,7 +14,7 @@ The server is default to `http://localhost:8081`
 
 # Deploy
 
-Commit changes
+Commit Changes
 
     $ git add build
 
