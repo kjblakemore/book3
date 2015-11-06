@@ -57,9 +57,9 @@ the events stored in your own Firebase.
 
 ## Questions about the class
 
-__Due: Friday Nov. 8, 11:59pm__
+__Due: Sunday Nov. 8, 11:59pm__
 
-Come up with ten interesting questions about yourself. Write code to analyze
+Come up with ten interesting questions about your classmates. Write code to analyze
 the events stored in everyone's Firebase.
 
 [class.html](class.html)
