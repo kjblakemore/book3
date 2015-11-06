@@ -38,7 +38,7 @@
     <div class="parallax">
       <img src="cloud.jpg">
       <h1 id="title">What is my online activity?
-        <div class="authors">by Name</div>
+        <div class="authors">by Karen Blakemore</div>
       </h1>
     </div>
   </div>
@@ -56,8 +56,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
   <script>
 
-// TODO: replace the FIREBAW_URL with your own
-var PERSONAL_FIREBASE_URL = 'https://doubleshow-bigdata-hci.firebaseio.com/'
+// TODO: replace the FIREBASE_URL with your own
+var PERSONAL_FIREBASE_URL = 'https://kjblakemore-bigdata-hci.firebaseio.com/'
 
 // add the personal firebase url to the class's firebase
 
@@ -86,66 +86,102 @@ function ask(func, events){
 function analyze(events){
   console.log(events)
 
-  ask(when_did_i_start_collecting, events)
-  ask(how_many_emails_have_i_received_since, events)
-  ask(question1, events)
-  ask(question2, events)
-  ask(question3, events)
-  ask(question4, events)
-  ask(question5, events)
-  ask(question6, events)
-  ask(question7, events)
-  ask(question8, events)
-  ask(question9, events)
-  ask(question10, events)
+  ask(when_was_the_first_gmail_received, events)
+  ask(when_was_the_last_gmail_received, events)
+  ask(how_many_gmails_have_been_received, events)
+  ask(what_percentage_of_gmails_are_received_at_night, events)
+  ask(what_is_the_average_time_beween_incoming_gmails, events)
+  ask(what_is_the_minimum_time_between_incoming_gmails, events)
+  ask(when_was_the_first_github_action_on_book3_repo, events)
+  ask(when_was_the_last_github_action_on_book3_repo, events)
+  ask(how_many_github_actions_have_occurred, events)
+  ask(which_github_action_occurred_the_most, events)
+  ask(what_is_the_average_time_beween_github_actions, events)
+  ask(what_is_the_minimum_time_between_github_actions, events)
 }
 
-function when_did_i_start_collecting(events){
-  return 'I started collecting from [TODO: earliest timestamp].'
+function when_was_the_first_gmail_received(events){
+  length = _.values(events.github).length
+  return 'The first gmail was received on ' + _.values(events.gmail)[length-1].Date
 }
 
-function how_many_emails_have_i_received_since(events){
+function when_was_the_last_gmail_received(events){
+  return 'The last gmail was received on ' + _.values(events.gmail)[0].Date
+}
+
+function how_many_gmails_have_been_received(events) {
   return 'I received ' + _.values(events.gmail).length + ' emails.'
 }
 
-function question1(events){
-  return 'I ...'
+function what_percentage_of_gmails_are_received_at_night(events){
+  var nightGmails = _.filter(events.gmail, function(g) {
+    var date = new Date(g.Date)
+    return date.getHours() < 8
+  })
+  percent = ((nightGmails.length/_.size(events.gmail))*100).toFixed(2)
+  return percent + '% of my gmails are received between midnight and 8 am'
 }
 
-function question2(events){
-  return 'I ...'
+function what_is_the_average_time_beween_incoming_gmails(events){
+  var avgTime = _.chain(events.gmail)
+    .map(function(g) { return Date.parse(g.Date) })
+    .reduce(function(total, d) { return total + d })
+    .value()/(1000 * _.size(events.gmail))
+
+  return 'The average time between incoming gmails is ' + avgTime.toFixed() + ' seconds'
 }
 
-function question3(events){
-  return 'I ...'
+function what_is_the_minimum_time_between_incoming_gmails(events){
+  var minTime = _.chain(events.gmail)
+    .map(function(g) { return Date.parse(g.Date) })
+    .min()
+    .value()/1000
+
+  return 'The minimum time between incoming gmails is ' + minTime.toFixed() + ' seconds'
 }
 
-function question4(events){
-  return 'I ...'
+function when_was_the_first_github_action_on_book3_repo(events){
+    length = _.values(events.github).length
+    return 'The first action took place on '
+      + _.values(events.github)[length - 1].CreatedAt
 }
 
-function question5(events){
-  return 'I ...'
+function when_was_the_last_github_action_on_book3_repo(events){
+  return 'The last action on my book3 repo took place on ' + _.values(events.github)[0].CreatedAt
 }
 
-function question6(events){
-  return 'I ...'
+function how_many_github_actions_have_occurred(events){
+  return _.values(events.github).length + ' actions have occurred on my book3 repo'
 }
 
-function question7(events){
-  return 'I ...'
+function which_github_action_occurred_the_most(events){
+  var action = _.chain(events.github)
+    .values(events.github)
+    .groupBy('Type')
+    .mapValues('length')
+    .pairs()
+    .max(function(p) { return p[1] })
+    .value()[0]
+
+  return 'The most frequently occurring action on my book3 repo is ' + action
 }
 
-function question8(events){
-  return 'I ...'
+function what_is_the_average_time_beween_github_actions(events){
+  var avgTime = _.chain(events.github)
+    .map(function(g) { return Date.parse(g.CreatedAt) })
+    .reduce(function(total, d) { return total + d })
+    .value()/(1000 * _.size(events.github))
+
+  return 'The average time between github actions is ' + avgTime.toFixed() + ' seconds'
 }
 
-function question9(events){
-  return 'I ...'
-}
+function what_is_the_minimum_time_between_github_actions(events){
+  var minTime = _.chain(events.github)
+    .map(function(g) { return Date.parse(g.CreatedAt) })
+    .min()
+    .value()/1000
 
-function question10(events){
-  return 'I ...'
+  return 'The minimum time between github actions is ' + minTime.toFixed() + ' seconds'
 }
 
 // initialize the parallax effect
