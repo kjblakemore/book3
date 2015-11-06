@@ -101,7 +101,7 @@ function analyze(events){
 }
 
 function when_was_the_first_gmail_received(events){
-  length = _.values(events.github).length
+  length = _.values(events.gmail).length
   return 'The first gmail was received on ' + _.values(events.gmail)[length-1].Date
 }
 
@@ -110,7 +110,7 @@ function when_was_the_last_gmail_received(events){
 }
 
 function how_many_gmails_have_been_received(events) {
-  return 'I received ' + _.values(events.gmail).length + ' emails.'
+  return "I've received " + _.values(events.gmail).length + " gmails."
 }
 
 function what_percentage_of_gmails_are_received_at_night(events){
@@ -119,7 +119,7 @@ function what_percentage_of_gmails_are_received_at_night(events){
     return date.getHours() < 8
   })
   percent = ((nightGmails.length/_.size(events.gmail))*100).toFixed(2)
-  return percent + '% of my gmails are received between midnight and 8 am'
+  return percent + '% of my gmails were received between midnight and 8 am'
 }
 
 function what_is_the_average_time_beween_incoming_gmails(events){
@@ -142,7 +142,7 @@ function what_is_the_minimum_time_between_incoming_gmails(events){
 
 function when_was_the_first_github_action_on_book3_repo(events){
     length = _.values(events.github).length
-    return 'The first action took place on '
+    return 'The first action on my book3 repo took place on '
       + _.values(events.github)[length - 1].CreatedAt
 }
 
