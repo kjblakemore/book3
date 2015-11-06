@@ -101,21 +101,21 @@ function analyze(events){
 }
 
 function when_was_the_first_gmail_received(events){
-  length = _.values(events.gmail).length
-  return 'The first gmail was received on ' + _.values(events.gmail)[length-1].Date
+  return 'The first gmail was received on ' + _.values(events.gmail)[0].Date
 }
 
 function when_was_the_last_gmail_received(events){
-  return 'The last gmail was received on ' + _.values(events.gmail)[0].Date
+  return 'The last gmail was received on '
+    + _.values(events.gmail)[_.size(events.gmail)-1].Date
 }
 
 function how_many_gmails_have_been_received(events) {
-  return "I've received " + _.values(events.gmail).length + " gmails."
+  return "I've received " + _.size(events.gmail) + " gmails."
 }
 
 function what_percentage_of_gmails_are_received_at_night(events){
-  var nightGmails = _.filter(events.gmail, function(g) {
-    var date = new Date(g.Date)
+  nightGmails = _.filter(events.gmail, function(g) {
+    date = new Date(g.Date)
     return date.getHours() < 8
   })
   percent = ((nightGmails.length/_.size(events.gmail))*100).toFixed(2)
@@ -123,31 +123,43 @@ function what_percentage_of_gmails_are_received_at_night(events){
 }
 
 function what_is_the_average_time_beween_incoming_gmails(events){
-  var avgTime = _.chain(events.gmail)
+  times = _.chain(events.gmail)
     .map(function(g) { return Date.parse(g.Date) })
-    .reduce(function(total, d) { return total + d })
+    .sortBy()
+    .value()
+
+  avgDelta = _.chain(times)
+    .map(function(t, i) {
+      return i == _.size(times)-1 ? 0 : times[i+1] - times[i]
+    }).reduce(function(total, d) { return total + d })
     .value()/(1000 * _.size(events.gmail))
 
-  return 'The average time between incoming gmails is ' + avgTime.toFixed() + ' seconds'
+  return 'The average time between incoming gmails is ' + avgDelta.toFixed() + ' seconds'
 }
 
 function what_is_the_minimum_time_between_incoming_gmails(events){
-  var minTime = _.chain(events.gmail)
+  times = _.chain(events.gmail)
     .map(function(g) { return Date.parse(g.Date) })
-    .min()
+    .sortBy()
+    .value()
+
+  minDelta = _.chain(times)
+    .map(function(t, i) {
+      return i == _.size(times)-1 ? 0x7fff : times[i+1] - times[i]
+    }).min()
     .value()/1000
 
-  return 'The minimum time between incoming gmails is ' + minTime.toFixed() + ' seconds'
+  return 'The minimum time between incoming gmails is ' + minDelta.toFixed() + ' seconds'
 }
 
 function when_was_the_first_github_action_on_book3_repo(events){
-    length = _.values(events.github).length
     return 'The first action on my book3 repo took place on '
-      + _.values(events.github)[length - 1].CreatedAt
+      + _.values(events.github)[0].CreatedAt
 }
 
 function when_was_the_last_github_action_on_book3_repo(events){
-  return 'The last action on my book3 repo took place on ' + _.values(events.github)[0].CreatedAt
+  return 'The last action on my book3 repo took place on '
+    + _.values(events.github)[_.size(events.github)-1].CreatedAt
 }
 
 function how_many_github_actions_have_occurred(events){
@@ -155,7 +167,7 @@ function how_many_github_actions_have_occurred(events){
 }
 
 function which_github_action_occurred_the_most(events){
-  var action = _.chain(events.github)
+  action = _.chain(events.github)
     .values(events.github)
     .groupBy('Type')
     .mapValues('length')
@@ -167,21 +179,33 @@ function which_github_action_occurred_the_most(events){
 }
 
 function what_is_the_average_time_beween_github_actions(events){
-  var avgTime = _.chain(events.github)
+  times = _.chain(events.github)
     .map(function(g) { return Date.parse(g.CreatedAt) })
-    .reduce(function(total, d) { return total + d })
+    .sortBy()
+    .value()
+
+  avgDelta = _.chain(times)
+    .map(function(t, i) {
+      return i == _.size(times)-1 ? 0 : times[i+1] - times[i]
+    }).reduce(function(total, d) { return total + d })
     .value()/(1000 * _.size(events.github))
 
-  return 'The average time between github actions is ' + avgTime.toFixed() + ' seconds'
+  return 'The average time between github actions is ' + avgDelta.toFixed() + ' seconds'
 }
 
 function what_is_the_minimum_time_between_github_actions(events){
-  var minTime = _.chain(events.github)
+  times = _.chain(events.github)
     .map(function(g) { return Date.parse(g.CreatedAt) })
-    .min()
+    .sortBy()
+    .value()
+
+  minDelta = _.chain(times)
+    .map(function(t, i) {
+      return i == _.size(times)-1 ? 0x7fff : times[i+1] - times[i]
+    }).min()
     .value()/1000
 
-  return 'The minimum time between github actions is ' + minTime.toFixed() + ' seconds'
+  return 'The minimum time between github actions is ' + minDelta.toFixed() + ' seconds'
 }
 
 // initialize the parallax effect
