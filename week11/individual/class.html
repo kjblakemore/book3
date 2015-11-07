@@ -134,6 +134,7 @@ function analyze(events){
 }
 
 function how_many_individuals_analyzed_so_far(events){
+  console.log('events', _.values(events))
   return _.keys(events).length
 }
 
@@ -185,44 +186,36 @@ function what_is_the_min_number_of_apps_being_monitored_by_a_single_user(events)
     .value()
 }
 
-// Find total events for an app.  Some students have subdirectories under their app.
+// Find total events for an app.  This is recursive to handle subdirectories
+// under app names.
 function sumEvents(app) {
   keys = _.keys(app)
   if(_.startsWith(keys[0], '-K2')) return _.size(keys)
   else return _.sum(_.mapValues(app, sumEvents))
 }
 
-function what_are_the_max_per_user_event_counts_for_each_app(events){
-  // For each student, map each app value to total events. Some students have
-  // no apps (s == null).  Others have no app names (name starts w/ -K2).
-  userAppCounts = _.mapValues(_.values(events), function(s) {
+// For each student, map their app values to total events. Some students have
+// no apps (s == null).  Others have no app names (name starts w/ -K2).
+function userAppCounts(events) {
+  return _.map(_.values(events), function(s) {
     if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
     else return _.mapValues(s, sumEvents)  // find total events for each app
   })
+}
 
-  // Find max per user event count for each app
-  maxes = _.chain(userAppCounts)
-    .values(userAppCounts)              // apps & counts for each user
+function what_are_the_max_per_user_event_counts_for_each_app(events){
+  return _.chain(userAppCounts(events))
+    .values()                           // apps & counts for each user
     .map(_.pairs)
     .flatten()
     .groupBy(function(m){ return m[0]}) // group by app name for all users
     .map(function(g) {                  // map each app to max event for app
         return _.max(g, function(pairs) { return pairs[1] })
     }).value().join('; ')
-
-  return maxes
 }
 
 function what_are_the_min_per_user_event_counts_for_each_app(events){
-  // For each student, map each app value to total events. Some students have
-  // no apps (s == null).  Others have no app names (name starts w/ -K2).
-  userAppCounts = _.mapValues(_.values(events), function(s) {
-    if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
-    else return _.mapValues(s, sumEvents)  // find total events for each app
-  })
-
-  // Find min per user event count for each app
-  mins = _.chain(userAppCounts)
+  return _.chain(userAppCounts(events))
     .values(userAppCounts)              // apps & counts for each user
     .map(_.pairs)
     .flatten()
@@ -230,20 +223,10 @@ function what_are_the_min_per_user_event_counts_for_each_app(events){
     .map(function(g) {                  // map each app to min event for app
         return _.min(g, function(pairs) { return pairs[1] })
     }).value().join('; ')
-
-  return mins
 }
 
 function what_are_the_avg_per_user_event_counts_for_each_app(events){
-  // For each student, map each app value to total events. Some students have
-  // no apps (s == null).  Others have no app names (name starts w/ -K2).
-  userAppCounts = _.mapValues(_.values(events), function(s) {
-    if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
-    else return _.mapValues(s, sumEvents)  // find total events for each app
-  })
-
-  // Find average per user event count for each app
-  avgs = _.chain(userAppCounts)
+  return _.chain(userAppCounts(events))
     .values(userAppCounts)              // apps & counts for each user
     .map(_.pairs)
     .flatten()
@@ -254,56 +237,28 @@ function what_are_the_avg_per_user_event_counts_for_each_app(events){
         })/g.length).toFixed()
     }).pairs()
     .value().join('; ')
-
-  return avgs
 }
 
 function what_is_the_average_number_of_events_per_user(events){
-  // For each student, map each app value to total events. Some students have
-  // no apps (s == null).  Others have no app names (name starts w/ -K2).
-  userAppCounts = _.mapValues(_.values(events), function(s) {
-    if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
-    else return _.mapValues(s, sumEvents)  // find total events for each app
-  })
-
-  avg = _.chain(userAppCounts)
+  avg = _.chain(userAppCounts(events))
     .map(function(apps) {return _.sum(_.values(apps))})
     .sum()
-    .value()/_.size(userAppCounts)
-
+    .value()/_.keys(events).length
   return avg.toFixed()
 }
 
 function what_is_the_minimum_number_of_events_per_user(events){
-  // For each student, map each app value to total events. Some students have
-  // no apps (s == null).  Others have no app names (name starts w/ -K2).
-  userAppCounts = _.mapValues(_.values(events), function(s) {
-    if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
-    else return _.mapValues(s, sumEvents)  // find total events for each app
-  })
-
-  min = _.chain(userAppCounts)
+  return _.chain(userAppCounts(events))
     .map(function(apps) { return _.sum(_.values(apps))})
     .min()
     .value().toFixed()
-
-  return min
 }
 
 function what_is_the_maximum_number_of_events_per_user(events){
-  // For each student, map each app value to total events. Some students have
-  // no apps (s == null).  Others have no app names (name starts w/ -K2).
-  userAppCounts = _.mapValues(_.values(events), function(s) {
-    if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
-    else return _.mapValues(s, sumEvents)  // find total events for each app
-  })
-
-  max = _.chain(userAppCounts)
+  return _.chain(userAppCounts(events))
     .map(function(apps) { return _.sum(_.values(apps))})
     .max()
     .value().toFixed()
-
-  return max
 }
 
 
