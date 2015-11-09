@@ -144,7 +144,6 @@ function whose_data_is_available(events){
 
 function what_applications_are_being_monitored(events){
   return _.chain(events)
-    .values(events)                         // get events for each user
     .map(function(e) { return _.keys(e) })  // get app names
     .flatten()
     .uniq()
@@ -153,10 +152,8 @@ function what_applications_are_being_monitored(events){
     }).value().join(', ')
 }
 
-// How many students are tracking each application?
 function how_many_students_are_tracking_each_application(events){
   return _.chain(events)
-    .values(events)
     .map(function(e) { return _.keys(e) })
     .flatten()
     .groupBy()
@@ -170,18 +167,18 @@ function how_many_students_are_tracking_each_application(events){
 
 function what_is_the_max_number_of_apps_being_monitored_by_a_single_user(events){
   return _.chain(events)
-    .values(events)
-    .mapValues(_.size)
-    .values()
+    // filter out users with no apps and those without app names
+    .filter(function(e) { return e != null && !_.startsWith(_.keys(e)[0], '-K2')})
+    .map(_.size)
     .max()
     .value()
 }
 
 function what_is_the_min_number_of_apps_being_monitored_by_a_single_user(events){
   return _.chain(events)
-    .values(events)
-    .mapValues(_.size)
-    .values()
+    // filter out users with no apps and those without app names
+    .filter(function(e) { return e != null && !_.startsWith(_.keys(e)[0], '-K2')})
+    .map(_.size)
     .min()
     .value()
 }
@@ -205,7 +202,6 @@ function userAppCounts(events) {
 
 function what_are_the_max_per_user_event_counts_for_each_app(events){
   return _.chain(userAppCounts(events))
-    .values()                           // apps & counts for each user
     .map(_.pairs)
     .flatten()
     .groupBy(function(m){ return m[0]}) // group by app name for all users
@@ -216,7 +212,6 @@ function what_are_the_max_per_user_event_counts_for_each_app(events){
 
 function what_are_the_min_per_user_event_counts_for_each_app(events){
   return _.chain(userAppCounts(events))
-    .values(userAppCounts)              // apps & counts for each user
     .map(_.pairs)
     .flatten()
     .groupBy(function(m){ return m[0]}) // group by app name for all users
@@ -227,7 +222,6 @@ function what_are_the_min_per_user_event_counts_for_each_app(events){
 
 function what_are_the_avg_per_user_event_counts_for_each_app(events){
   return _.chain(userAppCounts(events))
-    .values(userAppCounts)              // apps & counts for each user
     .map(_.pairs)
     .flatten()
     .groupBy(function(m){ return m[0]}) // group by app name for all users
