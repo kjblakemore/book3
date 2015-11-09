@@ -168,7 +168,6 @@ function how_many_github_actions_have_occurred(events){
 
 function which_github_action_occurred_the_most(events){
   action = _.chain(events.github)
-    .values(events.github)
     .groupBy('Type')
     .mapValues('length')
     .pairs()
