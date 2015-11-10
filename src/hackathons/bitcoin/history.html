@@ -41,7 +41,7 @@
     <div class="parallax">
       <img src="bitcoin.jpg">
       <h1 id="title">Should we buy or sell Bitcoins (History)?
-        <div class="authors">by Name1, Name2, Name3, Name4, </div>
+        <div class="authors">by Karen Blakemore, Fadhil Suhendi and Zhili Yang </div>
       </h1>
     </div>
   </div>
@@ -88,14 +88,15 @@ $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
     console.log('number of items loaded:', items.length)
     console.log('first item:', items[0])
 
-    setInterval(function(){
+    var intervalid = setInterval(function(){
       var item = items.pop()
-      price = item.price
-      $('#tweet').html(item.tweet)
-      $('#price').html(item.price)
-      process(tweet)
+      if(item != null) {
+        price = item.price
+        $('#tweet').html(item.tweet)
+        $('#price').html(item.price)
+        process(item)
+      } else clearInterval(intervalid)
     }, 2)
-
  })
  .fail(function(err){
      console.error(err)
@@ -105,16 +106,17 @@ function process(tweet){
    if (decideWhetherOrNotToTrade(tweet)){
      trade()
    }
-   showBankBalanceInUSD()
+   showBankBalanceInUSD(tweet)
  }
 
-function showBankBalanceInUSD(){
+function showBankBalanceInUSD(tweet){
   var prevBalance = Number($('#balance').text())
   var balance = bank.currency == 'USD' ? bank.balance : bank.balance * price
   balance = balance.toFixed(0)
-  if (balance > prevBalance)
+  if (balance > prevBalance) {
     $('#balance').html(balance).css('color','green')
-  else if (balance < prevBalance)
+    console.log("green tweet:", tweet)
+  } else if (balance < prevBalance)
     $('#balance').html(balance).css('color','red')
 }
 
