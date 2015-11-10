@@ -194,7 +194,7 @@ function sumEvents(app) {
 // For each student, map their app values to total events. Some students have
 // no apps (s == null).  Others have no app names (name starts w/ -K2).
 function userAppCounts(events) {
-  return _.map(_.values(events), function(s) {
+  return _.map(events, function(s) {
     if (s == null || _.startsWith(_.keys(s)[0], '-K2')) return 0
     else return _.mapValues(s, sumEvents)  // find total events for each app
   })
