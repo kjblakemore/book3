@@ -1,7 +1,5 @@
-//
-// TODO: implement the logic to decide whether or not to make a trade
-//
-
+// Build the Word Values Object, weighting each keyword by the sum of prices for all
+// tweets containing the word.
 var words = ['game', 'news', 'money', 'fun', 'good', 'actor', 'movies', 'tech',
   'music', 'people', 'apple', 'google']
 var wordValues = {'game': 0, 'news': 0, 'money': 0, 'fun': 0, 'good': 0, 'actor': 0,
@@ -26,7 +24,7 @@ $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
      console.error(err)
  })
 
-
+// Base the trade decision on the total value of all keywords in the tweet.
 function decideWhetherOrNotToTrade(t){
   var tweetWords = _.intersection(_.words(t.tweet), words)
     var value = 0

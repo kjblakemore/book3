@@ -41,7 +41,7 @@
     <div class="parallax">
       <img src="bitcoin.jpg">
       <h1 id="title">Should we buy or sell Bitcoins (History)?
-        <div class="authors">by Name1, Name2, Name3, Name4, </div>
+        <div class="authors">by Karen Blakemore, Fadhil Suhendi and Zhili Yang </div>
       </h1>
     </div>
   </div>
@@ -88,27 +88,15 @@ $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
     console.log('number of items loaded:', items.length)
     console.log('first item:', items[0])
 
-    setInterval(function(){
+    var intervalid = setInterval(function(){
       var item = items.pop()
-      price = item.price
-      $('#tweet').html(item.tweet)
-      $('#price').html(item.price)
-      process(item)
+      if(item != null) {
+        price = item.price
+        $('#tweet').html(item.tweet)
+        $('#price').html(item.price)
+        process(item)
+      } else clearInterval(intervalid)
     }, 2)
-
-    var words = ['game', 'news', 'money', 'fun', 'good', 'actor', 'movies', 'tech',
-      'music', 'people', 'apple', 'google']
-    var wordValues = {'game': 0, 'news': 0, 'money': 0, 'fun': 0, 'good': 0, 'actor': 0,
-      'movies': 0, 'tech': 0, 'music': 0, 'people': 0, 'apple': 0, 'google': 0}
-
-    _.forEach(items, function(i) {
-      var tweetWords = _.intersection(_.words(i.tweet), words)
-      _.forEach(tweetWords, function(w) {
-        wordValues[w] += i.price/1000
-      })
-    })
-
-    console.log('wordValues', wordValues)
  })
  .fail(function(err){
      console.error(err)
