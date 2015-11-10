@@ -14,7 +14,7 @@ $.ajax({url: 'https://big-data-hci-hackathon.firebaseapp.com/history.json'})
     _.forEach(items, function(i) {
       var tweetWords = _.intersection(_.words(i.tweet), words)
       _.forEach(tweetWords, function(w) {
-        wordValues[w] = wordValues[w] + i.price/1000
+        wordValues[w] += i.price/1000
       })
     })
 
@@ -29,8 +29,8 @@ function decideWhetherOrNotToTrade(t){
   var tweetWords = _.intersection(_.words(t.tweet), words)
     var value = 0
     _.forEach(tweetWords, function(w) {
-      var value = value + wordValues[w]
+      value += wordValues[w]
     })
-
-  return bank.currency == 'USD' && value < 20
+  return (bank.currency == 'USD' && value < 50) ||
+    (bank.currency == 'BITCOIN' && value >= 50)
 }
