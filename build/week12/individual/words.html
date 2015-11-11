@@ -39,7 +39,7 @@
     <div class="parallax">
       <img src="http://res.cloudinary.com/craftml/image/upload/c_scale,e_brightness:-62,w_1000/v1447038536/books_nh4k05.jpg">
       <h1 id="title">How did word usage change over time?
-        <div class="authors">by Name</div>
+        <div class="authors">by Karen Blakemore</div>
       </h1>
     </div>
   </div>
@@ -85,8 +85,6 @@ function csv2jsonArray(rawdata){
   return _.map(rows, function(row){
     var toks = row.split(',')
     return {decade: toks[0], word: toks[1], rank: toks[2], count: toks[3]}
-    // TODO:
-    // return {decade:1900, word: 'the', count: 721149566}
   })
 }
 
@@ -130,11 +128,6 @@ function analyze(){
   ask('in the decade when the word Internet became popular for the first time, what other words also became popular for the first time?', func7)
   ask('when did the word OIL become more popular than GOLD?', func8)
   ask('what terms saw the biggest drop in popularity over the past century?', func9)
-
-  // HINT: This is a hard question.
-  // One possible algorithm is to first encode the changes as a binary string
-  // For example, war => 100111001, where 1 means UP, 0 means down.
-  // Then identify those with the exact encoding.
   ask('what terms are most similar to the term WAR in terms of the changes in popularity?', func10)
 
   $('pre code').each(function(i, block) {
@@ -143,48 +136,212 @@ function analyze(){
   toggleSourecode()
 }
 
+// How many decades are there in the data set?
+
 function example(){
   return _.unique(_.pluck(items, 'decade')).length
 }
 
+// How does the word 'data' change in popularity over the decades?
+
 function func1(){
-  return '...'
+  return _.chain(items)
+    .filter({'word': 'data'})
+    .sortBy('decade')
+    .map(function(entry) {
+      return _.chain(entry)
+        .pick('decade', 'rank')
+        .pairs()
+        .flatten()
+        .value()
+    }).value().join('; ')
 }
+
+// In which decade was the term 'oil' most used?
 
 function func2(){
-  return '...'
+  return _.chain(items)
+    .filter({'word': 'oil'})
+    .sortBy(function(entry) { return -entry.count })
+    .value()[0].decade
 }
+
+// When did the word 'feminism' become popular?
 
 function func3(){
-  return '...'
+  return _.chain(items)
+    .filter({'word': 'feminism'})
+    .sortBy('decade')
+    .value(0)[0].decade
 }
+
+// How does the word 'communism' change in popularity over time?
 
 function func4(){
-  return '...'
+  return _.chain(items)
+    .filter({'word': 'communism'})
+    .sortBy('decade')
+    .map(function(entry) {
+      return _.chain(entry)
+        .pick('decade', 'rank')
+        .pairs()
+        .flatten()
+        .value()
+    }).value().join('; ')
 }
+
+// What words were in fashion only in earlier decades?
 
 function func5(){
-  return '...'
+    topItems = _.filter(items, function(i) { return i.rank < 250 })
+
+    topWords = _.chain(topItems)
+      .pluck('word')
+      .uniq()
+      .value()
+
+    newTopWords = _.chain(topItems)
+      .filter(function(i) { return i.decade >= 1960 })
+      .pluck('word')
+      .uniq()
+      .value()
+
+    return _.difference(topWords, newTopWords).join(', ')
 }
+
+// What words only came into fashion in recent decades?
 
 function func6(){
-  return '...'
+  topItems = _.filter(items, function(i) { return i.rank < 250 })
+
+  topWords = _.chain(topItems)
+    .pluck('word')
+    .uniq()
+    .value()
+
+  oldTopWords = _.chain(topItems)
+    .filter(function(i) { return i.decade < 1960 })
+    .pluck('word')
+    .uniq()
+    .value()
+
+  return _.difference(topWords, oldTopWords).join(', ')
 }
+
+// In the decade when the word 'internet' became popular for the first time,
+// what other words also became popular for the first time?
 
 function func7(){
-  return '...'
+  decade = _.chain(items)
+    .filter({'word': 'internet'})
+    .sortBy('decade')
+    .value()[0].decade
+
+  words = _.chain(items)
+    .groupBy('word')
+    .filter(function(w) {
+        return _.min(_.values(w), 'decade').decade == decade
+    }).map(function(w) { return w[0].word })
+    .value().join(', ')
+
+  return words
 }
+
+// When did the word 'oil' become more popular than 'gold'?
+//
+// Oil and Gold both have entries for all 11 decades in the data set.
+//
+// No sorting is done of decades as the word instances are listed in increasing
+// decade order in the data set and this order is preserved throughout the processing.
 
 function func8(){
-  return '...'
+  oil = _.chain(items)
+    .filter({'word': 'oil'})
+    .map(function(i) {return _.pick(i, 'decade', 'rank')})
+    .value()
+
+  gold = _.chain(items)
+    .filter({'word': 'gold'})
+    .map(function(i) {return _.pick(i, 'decade', 'rank')})
+    .value()
+
+  decade = _.find(_.zip(oil, gold), function(pair) {
+    return parseInt(pair[0].rank) > parseInt(pair[1].rank)
+  })[0].decade
+
+  return decade
 }
+
+// What terms saw the biggest drop in popularity over the past century?
+//
+// No sorting is done of decades as the word instances are listed in increasing
+// decade order in the data set and this order is preserved throughout the processing.
 
 function func9(){
-  return '...'
+  words = _.chain(items)
+    .groupBy('word') 
+    .mapValues(function(w) { return w[0].rank - w[w.length-1].rank })
+    .pairs()
+    .sortBy(function(w) { return w[1] })
+    .take(50)
+    .value().join('; ')
+
+  return words
 }
 
+// What terms are most similar to the term 'war' in terms of the changes in popularity?
+//
+// Use a binary encoding to represent the changes in popularity over the decades. 
+// With 1 indicating an increase in popularity and 0 indicating a decrease.
+//
+// No sorting is done of decades as the word instances are listed in increasing
+// decade order in the data set and this order is preserved throughout the processing.
+//
+// War has an entry for all 11 decades in the data set.
+
 function func10(){
-  return '...'
+  // Get the ranks for 'war'
+  warRanks = _.chain(items)
+    .filter({'word': 'war'})
+    .pluck('rank')
+    .value()
+
+  // Construct the bitmap for 'war'
+  _.forEach(warRanks, function(rank, i) {
+    if (i==0) warBitMap = 0
+    else {
+      bit = (warRanks[i] - warRanks[i-1]) < 0 ? 1 : 0
+      warBitMap = warBitMap | bit << (i-1)
+    }
+  })
+
+  // Gather words and corresponding ranks, for those words listed in all 11 decades
+  ranks = _.chain(items)
+    .groupBy('word')
+    .mapValues(function(w) { return _.pluck(_.values(w), 'rank') })
+    .pick(function(value) { return value.length == 11 })
+    .value()
+
+  // Map value of each word to its' bitmap
+  bitMaps = _.mapValues(ranks, function(r, i) {
+    _.forEach(r, function(rank, i) {
+      if (i==0) bitMap = 0
+      else {
+        bit = (r[i] - r[i-1]) < 0 ? 1 : 0
+        bitMap = bitMap | bit << (i-1)
+      }
+    })
+  return bitMap
+  })
+
+  // Find words with bitmaps matching "war's" bitmap
+  matches = _.chain(bitMaps)
+    .pick(function(bitMap) { return bitMap == warBitMap })
+    .keys()
+    .without('war')
+    .value().join(', ')
+
+  return matches
 }
 
 // initialize the parallax effect
