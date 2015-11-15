@@ -37,12 +37,11 @@
 var profileItems = []
 var servicesItems = []
 
-// What is the relationship betweenproduct and bandwidth?
-// TBD - Add bandwidth labels. Fix gap in bar chart.
+// What is the relationship between product and bandwidth?
+// TBD - Add bandwidth labels. Fix gap in bar chart - compress out bandwidths with all zeros?
 function solution1() {
     productsByBandwidth = _.chain(servicesItems)
-        .filter(function(s) { 
-            return !_.includes(['NA', 'N/A', 'NULL'], s.Bandwidth) && s.Product})
+        .filter(function(s) { return !_.includes(['NA', 'N/A', 'NULL'], s.Bandwidth) })
         .groupBy('Bandwidth')
         .mapValues(function(b) {
             return _.chain(b)
