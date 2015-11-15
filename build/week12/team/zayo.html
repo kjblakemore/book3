@@ -7,13 +7,13 @@
 
 <div class="container">
 
-    <h1 id="title">Zayo / Big Data: Business Intelligience Collaboration
+    <h1 style="font-size: 210%", id="title">Zayo / Big Data: Business Intelligience Collaboration
         <div class="authors">by Karen Blakemore, Fadhil Suhendi & Zhili Yang</div>
       </h1>
 
     <section id="q1" class="question">
         <h4>1. What is the relationship between product and bandwidth?</h4>
-        <div style="height:500px", class="answer ct-double-octave"></div>
+        <div style="height:300px", class="answer ct-double-octave"></div>
     </section>
 
     <section id="q2" class="question">
@@ -32,7 +32,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.4/chartist.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.1/js/materialize.min.js"></script>
-    <script src="/js/geolib.js"></script>
     <script>
 
 var profileItems = []
@@ -116,11 +115,11 @@ function tsv2jsonServices(rawdata){
 }
 
 function loadDataThenRunSolutions() {
-  $.get('/data/customer_accounts_profile.tsv')
+  $.get('http://kjblakemore.github.io/book3/data/customer_accounts_profile.tsv')
     .done(function(data){ console.log('got profile data 2')   
       profileItems = tsv2jsonProfile(data)
       console.log('profileItems[0]', profileItems[0])
-    $.get('/data/customer_accounts_services.tsv')
+    $.get('http://kjblakemore.github.io/book3/data/customer_accounts_services.tsv')
       .done(function(data){
         servicesItems = tsv2jsonServices(data)
         console.log('servicesItems[0]', servicesItems[0])
