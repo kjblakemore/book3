@@ -60,11 +60,6 @@
         <div style="height:300px", class="answer ct-double-octave"></div>
         </section>
 
-        <section id="q2" class="question">
-        <h4>What is the distribution of products across service rankings?</h4>
-        <div class="answer ct-double-octave"></div>
-        </section>
-
         <section id="q3" class="question">
         <h4>What are the relationships between industries and products?</h4>
         <div class="answer ct-double-octave"></div>
@@ -160,7 +155,7 @@ function run(id, solutionFunc){
 
 function analyze() {
   run('#q1', func1)
-  run('#q2', func2)
+  ask("Fadhil's Question", func2)
   run('#q3', func3)
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
