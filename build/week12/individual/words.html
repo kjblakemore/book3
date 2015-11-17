@@ -266,7 +266,7 @@ function func8(){
     .value()
 
   decade = _.find(_.zip(oil, gold), function(pair) {
-    return parseInt(pair[0].rank) > parseInt(pair[1].rank)
+    return parseInt(pair[0].rank) < parseInt(pair[1].rank)
   })[0].decade
 
   return decade
