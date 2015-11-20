@@ -263,10 +263,6 @@ function solution3(){
         return image[0] >= 0
     })
 
-    var noLife = _.filter(_.values(images), function(image) {
-        return image[0] == 0
-    }).length
-
     var unzippedFilteredImages = _.unzip(filteredImages)
     var maxLifespan = _.max(unzippedFilteredImages[0])
     var maxFollowers = _.max(unzippedFilteredImages[1])
