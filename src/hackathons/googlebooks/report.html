@@ -39,7 +39,7 @@
     <div class="parallax">
       <img src="http://res.cloudinary.com/craftml/image/upload/c_scale,e_brightness:-62,w_1000/v1447038536/books_nh4k05.jpg">
       <h1 id="title">How did word usage change over time?
-        <div class="authors">by [Name 1], [Name 2], [Name 3], [Name 4]</div>
+        <div class="authors">by Karen Blakemore, Fadhil Suhendi & Zhili Yang</div>
       </h1>
     </div>
   </div>
@@ -85,8 +85,6 @@ function csv2jsonArray(rawdata){
   return _.map(rows, function(row){
     var toks = row.split(',')
     return {decade: toks[0], word: toks[1], rank: toks[2], count: toks[3]}
-    // TODO:
-    // return {decade:1900, word: 'the', count: 721149566}
   })
 }
 
@@ -120,8 +118,8 @@ function ask(text, func){
 }
 
 function analyze(){
-  ask('question1?', func1)
-  ask('question2?', func2)
+  ask('For each decade, what is the most popular, longest word?', func1)
+  ask('For each decade, what is the least popular, longest word?', func2)
   ask('question3?', func3)
   ask('question4?', func4)
   ask('question5?', func5)
@@ -132,12 +130,41 @@ function analyze(){
   toggleSourecode()
 }
 
+// For each decade, what is the most popular, longest word?
 function func1(){
-  return '...'
+  return _.chain(items)
+    .groupBy('decade')
+    .mapValues(function(d) {
+      longestWords = _.chain(d)
+        .groupBy(function(w) { return w.word.length })
+        .pairs()
+        .last()
+        .value()
+      mostPopular = _.min(longestWords[1], function(w) {
+        return w.rank
+      })
+      return ' ' + mostPopular.word + '(rank ' + mostPopular.rank +')'
+    }).pairs()
+    .value().join('; ')
 }
 
+
+// For each decade, what is the least popular, longest word?
 function func2(){
-  return '...'
+  return _.chain(items)
+    .groupBy('decade')
+    .mapValues(function(d) {
+      longestWords = _.chain(d)
+        .groupBy(function(w) { return w.word.length })
+        .pairs()
+        .last()
+        .value()
+      leastPopular = _.max(longestWords[1], function(w) {
+        return w.rank
+      })
+      return ' ' + leastPopular.word + '(rank ' + leastPopular.rank +')'
+    }).pairs()
+    .value().join('; ')
 }
 
 function func3(){
