@@ -120,9 +120,10 @@ function ask(text, func){
 function analyze(){
   ask('For each decade, what is the most popular, longest word?', func1)
   ask('For each decade, what is the least popular, longest word?', func2)
-  ask('question3?', func3)
-  ask('question4?', func4)
-  ask('question5?', func5)
+  ask('In which decade does coffee become more popular than tea?', func3)
+  ask('What words are popular in every decade and are also of the longest length?', func4)
+  ask('What is the least popular word in every decade??', func5)
+
 
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
@@ -167,16 +168,107 @@ function func2(){
     .value().join('; ')
 }
 
+// In which decade is coffee more popular than tea?
 function func3(){
-  return '...'
+  var tea_coffee=_.filter(items, function(i){
+    return i["word"] === "tea" || i["word"] === "coffee"
+  })
+  var decade_group=_.groupBy(tea_coffee, function(i){
+    return i["decade"]
+  })
+  
+  var groups=_.mapValues(decade_group, function(g){
+    return _.pairs(_.groupBy(g, function(e){
+      return e["word"]
+    }))
+  })
+
+  var clean_groups=_.mapValues(groups, function(g){
+    return _.map(g, function(e){
+      return {
+        word: e[0],
+        decade: e[1][0]["decade"],
+        rank: e[1][0]["rank"]
+      }
+    })
+  })
+
+  var pairs=_.map(_.pairs(clean_groups), function(p){
+    return {
+      decade: p[0],
+      tea_coffee: p[1]
+    }
+  })
+
+  var filt_pairs=_.filter(pairs, function(p){
+    return p["tea_coffee"].length > 1
+  })
+
+  var group_filt=_.map(filt_pairs, function(f){
+    return {
+      decade: f["decade"],
+      tea_coffee: _.groupBy(f["tea_coffee"], function(t){
+        return t["word"]
+      })
+    }
+  })
+
+  var diff=_.map(group_filt, function(g){
+    return {
+      decade: g["decade"],
+      diff: parseInt(g["tea_coffee"]["coffee"][0]["rank"])-parseInt(g["tea_coffee"]["tea"][0]["rank"])
+    }
+  })
+
+  var diff_filt=_.filter(diff, function(d){
+    return d["diff"] < 0
+  })
+ return diff_filt[0]["decade"]
 }
 
+// What words are popular in every decade and are also of the longest length?
 function func4(){
-  return '...'
+  var gr = _.groupBy(items,function(n){
+    return n.word 
+  })
+
+  var leng = _.filter(gr,function(n){
+    return n.length == 35
+  })
+ 
+  var m = _.map(leng,function(n){
+    return n[0].word.length
+  })
+
+  var maxim = _.max(m)
+  var wor = _.filter(leng,function(n){
+    return n[0].word.length == maxim
+  })
+  var result = _.map(wor,function(n){
+    return n[0].word
+  })
+
+  return result
 }
 
+// What is the least popular word in every decade?
 function func5(){
-  return '...'
+  var group = _.groupBy(items,function(n){
+    return n.decade
+  })
+
+  var leastPopular = _.map(group,function(n){
+    return n[0]
+  })
+
+  var result = _.filter(leastPopular,function(n){
+    return n.count > 30000
+  })
+
+  var map = _.map(result,function(n){
+    return n.decade + ": " + n.word + "(" +n.count + ")"
+  })
+  return map
 }
 
 // initialize the parallax effect
