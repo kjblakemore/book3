@@ -145,7 +145,7 @@ var servicesItems
 var nonServicesItems
 
 function loadDataThenRunSolutions() {
-  $.get('http://kjblakemore.github.io/book3/data/tranzact_accounts_profile.tsv')
+  $.get('http://kjblakemore.github.io/book3/data/tranzact_accounts_details.tsv')
     .done(function(data){   
       detailItems = tsv2jsonDetails(data)
       console.log('detailItems[0]', detailItems[0])   
