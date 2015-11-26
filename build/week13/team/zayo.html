@@ -145,15 +145,15 @@ var servicesItems
 var nonServicesItems
 
 function loadDataThenRunSolutions() {
-  $.get('/data/tranzact_accounts_details.tsv')
+  $.get('http://kjblakemore.github.io/book3/data/tranzact_accounts_profile.tsv')
     .done(function(data){   
       detailItems = tsv2jsonDetails(data)
       console.log('detailItems[0]', detailItems[0])   
-      $.get('/data/tranzact_accounts_services.tsv')
+      $.get('http://kjblakemore.github.io/book3/data/tranzact_accounts_services.tsv')
         .done(function(data){
           servicesItems = tsv2jsonServices(data)
           console.log('servicesItems[0]', servicesItems[0])
-          $.get('/data/tranzact_accounts_noservices.tsv')
+          $.get('http://kjblakemore.github.io/book3/data/tranzact_accounts_noservices.tsv')
             .done(function(data){
               nonServicesItems = tsv2jsonNonServices(data)
               console.log('nonServicesItems[0]', nonServicesItems[0])
