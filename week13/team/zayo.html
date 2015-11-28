@@ -35,7 +35,7 @@
   <div class="parallax-container"  style="height:325px">
     <div class="parallax">
       <img src="http://mms.businesswire.com/media/20150722005491/en/239161/5/ZAYO_Group_SPOT.jpg">
-      <h1 id="title">Zayo / Big Data: Business Intelligience Collaboration 2
+      <h1 id="title">Zayo / Big Data: Business Intelligience Collaboration 3
         <div class="authors">by Karen Blakemore, Fadhil Suhendi & Zhili Yang</div>
       </h1>
     </div>
@@ -62,30 +62,30 @@
           }
         </style>
 
-        <section id="q1" class="question">
-        <h4> 1. Of the Tranzact accounts that have services: What industries/verticals spend the most money and on what products/services?</h4>
-        <div class="answer ct-double-octave"></div>
-        </section>
-
-        <section id="q2" class="question">
-        <h4>If Zayo only had enough team members to focus on two products, which products would you prioritize</h4>
-        <div class="answer ct-double-octave"></div>
-        </section>
-
-        <section id="q3" class="question">
-        <h4>If Zayo only had 5 representatives, which states would you prioritize for in person meetings?</h4>
+        <section id="q5" class="question">
+        <h4>1. Of the Tranzact accounts without services: How would you prioritize which accounts to go after first and which products would they potentially buy?</h4>
         <div class="answer ct-double-octave"></div>
         </section>
 
         <section id="q4" class="question">
-        <h4>If Zayo sent quotes to all Tranzact accounts, how would you prioritize the customer account list? (And list the prioritized accounts from 1 to ####)</h4>
+        <h4>2. If Zayo sent quotes to all Tranzact accounts, how would you prioritize the customer account list? (And list the prioritized accounts from 1 to ####)</h4>
+        <div class="answer ct-double-octave"></div>
+      
+        <section id="q3" class="question">
+        <h4>3. If Zayo only had 5 representatives, which states would you prioritize for in person meetings?</h4>
         <div class="answer ct-double-octave"></div>
         </section>
 
-        <section id="q5" class="question">
-        <h4>Of the Tranzact accounts without services: How would you prioritize which accounts to go after first and which products would they potentially buy?</h4>
+        <section id="q1" class="question">
+        <h4> 4. Of the Tranzact accounts that have services: What industries/verticals spend the most money and on what products/services?</h4>
         <div class="answer ct-double-octave"></div>
         </section>
+
+        <section id="q2" class="question">
+        <h4>5. If Zayo only had enough team members to focus on two products, which products would you prioritize</h4>
+        <div class="answer ct-double-octave"></div>
+        </section>
+
       </div>
   </div>
 
@@ -187,11 +187,11 @@ function run(id, solutionFunc){
 }
 
 function analyze() {
+  run('#q5', func5)
+  run('#q4', func4)
+  run('#q3', func3)
   run('#q1', func1)
   run('#q2', func2)
-  run('#q3', func3)
-  run('#q4', func4)
-  run('#q5', func5)
   $('pre code').each(function(i, block) {
     hljs.highlightBlock(block);
   })
@@ -201,13 +201,17 @@ function analyze() {
 // Of the Tranzact accounts that have services: What industries/verticals spend the most
 // money and on what products/services?
 function func1() {
-  return '<img src="q1.png" width="1200"><img src="q1a.png" width="1200">'
+  return '<p><b> Total MRR by Industry/Vertical/Product/Service</p></b>' +
+    '<img src="q1.png" width="1200">' +
+    '<p><b>Comparison of MRR and BRR by Indusry/Vertical</p></b>' +
+    '<img src="q1a.png" width="1200">'
 }
 
 // If Zayo only had enough team members to focus on two products, which products would
 // you prioritize?
 function func2() {
-  return '<img src="q2.png" width="1200">'
+  return '<p><b> Products Ranked by Total MRR</p></b>' +
+    '<img src="q2.png" width="1200">'
 }
 
 // If Zayo only had 5 representatives, which states would you prioritize for in­ person meetings?
@@ -320,6 +324,7 @@ function func4() {
   sorts=sorts.concat(sort_bill)
   sorts=sorts.concat(sort_partial_inst)
  
+ /* Uncomment to generate new table
   var title = '<p><b>Prioritized Customers</b></p>'
   var headers = '<tr><th>Customer</th><th>Rank</th></tr>'
   var entries = ''
@@ -327,19 +332,25 @@ function func4() {
     entries += '<tr><td>' + s[0] + '</td><td>' + (i+1) + '</td></tr>'
   })
 
+  var result = title + '<table style="width:20%">' + headers + entries + '</table>'
+  */
+
+  // Comment this line, when generating new table.
+  var result = '<br><a href="q4.pdf">Display Accounts</a>'
+
   var text = 'There are six different statuses: Pending Change, Disconnected, Pending Disconnect, Active Billed, Partial Install. I grouped customers by the six statuses.' + 
     'I assumed customers might want to change their services under the "pending change", "disconnected"  and "pending disconnected" statuses.' +
     'Therefore, I put customers in these three groups on the top of the priority (the sequence is like what I show above).' +
     'And in each group, I sort customers by "total MRR", and the sequence is ascending, which means the customer with lower MRR might want to change their services more than the ones with higher MRR.'
 
-  return text + title + '<table style="width:20%">' + headers + entries + '</table>'
+  return text + result
 }
 
 // Of the Tranzact accounts without services: How would you prioritize which accounts to
 // go after first and which products would they potentially buy?
-// Customers with the highest Sales Volumes from the top three industry/sector pairs, 
+// Accounts with the highest Prior Year Revenue from the top three industry/sector pairs, 
 // ranked by average MRR are selected.  To these potential customers, we recommend products 
-// that are used by current customers in the top-ranking industry/sector pairs.
+// that are used by current accounts in the top-ranking industry/sector pairs.
 function func5() { 
   const INDUSTRY_VERTICAL_COUNT = 4
   const NEW_CUSTOMER_COUNT = 4
@@ -401,7 +412,9 @@ function func5() {
     .value()
 
   // Generate table of recommended new accounts
-  var tablesIndustryVerticals = '<p><b>New Accounts Based on Average Customer Total MRR for Industry/Vertical</b></p>'
+  var tablesIndustryVerticals = '<p>Accounts with the highest Prior Year Revenues from the top four industry/sector pairs are given highest priority.  Industry/Sector pairs are ranked by average per account MRR.</p>' +
+    '<p>The priority new accounts are likely to purchase products that are currently in use by accounts in the top-ranking industry/sector pairs.</p>' +
+    '<p><b>Priority New Accounts<p><b>'
 
   _.forEach(topIndustryVerticals, function(industry_vertical) {
     tablesIndustryVerticals += '<table style="width:50%"><thead><tr><th colspan="2">' + industry_vertical[0] + ' (' + industry_vertical[1][0].toLocaleString('en-US', { style: 'currency', currency: 'USD' }) 
@@ -415,8 +428,7 @@ function func5() {
   })
 
   // Create table of recommended products
-  var tableProducts = '<p><b>Recommended Products (Products Used by Top Industry/Verticals)</b></p>' +
-    '<table><tr>'
+  var tableProducts =  '<p><b>Likely Products for Priority New Accounts</b></p><table><tr>'
 
   _.forEach(topIndustryVerticals, function(industry_vertical) {
     tableProducts += '<th>' + industry_vertical[0] + '</th>'
