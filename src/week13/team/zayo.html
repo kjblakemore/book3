@@ -251,7 +251,11 @@ function func3() {
   var entries = '<tr><td>' + _.uniq(s) + '</td><td>' + sortCustomer[0].customer + '</td><td>' 
     + sortCustomer[0].totalMRR + '</td></tr>'
 
-  return title + '<table style="width:40%">' + headers + entries + '</table>' + '<img src="q3.png" width="1200">'
+  var table = title + '<table style="width:40%">' + headers + entries + '</table>'
+
+  var narrative = 'The method I used is I try to find states where there are companies who contribute the largest MRR. I first grouped by the customer Name/Id, and grouped them by the total MRR. The result is that the customer with the id number 64397 has the highest MRR and is located in WY and CO. So our very first priority is WY followed by CO. The second customer has the second largest MRR, however half of their total MRR came from pending change. Therefore, we pick the third priority state to be AZ and follow with IL and TX.'
+
+  return narrative + table + '<img src="q3.png" width="1200">'
 }
 
 // If Zayo sent quotes to all Tranzact accounts, how would you prioritize the customer
@@ -277,7 +281,6 @@ function func4() {
         return true
     })
     name_groups_pairs=without_status
-    console.log("with: ", with_status)
     var sum_mrr=_.map(with_status, function(w){
       var filt=_.filter(w.services, function(s){
         return s["Service Status"] === status
@@ -293,7 +296,6 @@ function func4() {
         name: w.name
       }
     })
-    console.log("sum: ", sum_mrr)
 
     return _.sortBy(sum_mrr, function(s){
       return s.sum
@@ -305,14 +307,10 @@ function func4() {
   })
 
   var name_groups_pairs=_.pairs(name_groups)
-  console.log("name groups, ", name_groups_pairs)
 
   var pend_change=filt_func("Pending Change")
-  
-  console.log("pend_change", pend_change)
 
   var disc=filt_func("Disconnected")
-  console.log("disc", disc)
 
   var pend_disc=filt_func("Pending Disconnect")
 
@@ -344,9 +342,9 @@ function func4() {
 // Comment following line, when generating new table.
   var result = '<br><a href="q4.pdf">Display Accounts</a>'
 
-  var text = 'There are six different statuses: Pending Change, Disconnected, Pending Disconnect, Active Billed, Partial Install. I grouped customers by the six statuses. I assumed customers might want to change their services under the "pending change", "disconnected"  and "pending disconnected" statuses.  Therefore, I put customers in these three groups on the top of the priority (the sequence is like what I show above).  And in each group, I sort customers by "total MRR", and the sequence is ascending, which means the customer with lower MRR might want to change their services more than the ones with higher MRR.'
+  var narrative = 'There are six different statuses: Pending Change, Disconnected, Pending Disconnect, Active Billed, Partial Install. I grouped customers by the six statuses. I assumed customers might want to change their services under the "pending change", "disconnected"  and "pending disconnected" statuses.  Therefore, I put customers in these three groups on the top of the priority (the sequence is like what I show above).  And in each group, I sort customers by "total MRR", and the sequence is ascending, which means the customer with lower MRR might want to change their services more than the ones with higher MRR.'
 
-  return text + result
+  return narrative + result
 }
 
 
@@ -416,9 +414,7 @@ function func5() {
     .value()
 
   // Generate table of recommended new accounts
-  var tablesIndustryVerticals = '<p>Accounts with the highest Prior Year Revenues from the top four industry/sector pairs are given highest priority.  Industry/Sector pairs are ranked by average per account MRR.</p>' +
-    '<p>The priority new accounts are likely to purchase products that are currently in use by accounts in the top-ranking industry/sector pairs.</p>' +
-    '<p><b>Priority New Accounts<p><b>'
+  var tablesIndustryVerticals = '<p><b>Priority New Accounts<p><b>'
 
   _.forEach(topIndustryVerticals, function(industry_vertical) {
     tablesIndustryVerticals += '<table style="width:50%"><thead><tr><th colspan="2">' + industry_vertical[0] + ' (' + industry_vertical[1][0].toLocaleString('en-US', { style: 'currency', currency: 'USD' }) 
@@ -444,8 +440,11 @@ function func5() {
   })
   
   tableProducts += '</tr></table>'
+
+  var narrative = '<p>Accounts with the highest Prior Year Revenues from the top four industry/sector pairs are given highest priority.  Industry/Sector pairs are ranked by average per account MRR.</p>' +
+    '<p>The priority new accounts are likely to purchase products that are currently in use by accounts in the top-ranking industry/sector pairs.</p>'
  
-  return tablesIndustryVerticals + tableProducts
+  return narrative + tablesIndustryVerticals + tableProducts
 }
 
 // initialize the parallax effect
