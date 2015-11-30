@@ -137,7 +137,7 @@ function tsv2jsonNonServices(rawdata){
   var rows = _.rest(lines)
   return _.map(rows, function(row){
     var toks = row.split('\t')
-    return {"Name/ID": toks[0], "Vertical": toks[1], "Industry": toks[2], "EmployeeQuantityGrowthRate": toks[3], "SalesTurnoverGrowthRate": toks[4], "PriorYearEmployees": toks[5], "PriorYearRevenue": toks[6], "SalesVolume": toks[7], "SmallBusiness": toks[8]}
+    return {"Name/ID": toks[0], "Vertical": toks[1], "Industry": toks[2], "EmployeeQuantityGrowthRate": toks[3], "SalesTurnoverGrowthRate": toks[4], "PriorYearEmployees": toks[5], "PriorYearRevenue": toks[6], "SalesVolume": toks[7], "SmallBusiness": toks[8], "Delinquency Rate": toks[9]}
   })
 }
 
@@ -400,8 +400,8 @@ function func5() {
 
   // newCustomers = [industry_vertical_pair: [customer_id, prior_year_revenue]]
   newCustomers = _.chain(nonServicesItems)
-    .filter(function(d) {  // only consider customers from top industry/sector pairs
-      return _.includes(topNames, d.Industry + ',' + d.Vertical)
+    .filter(function(d) {  // only consider customers from top industry/sector pairs that do not have a High Delinquency Rate
+      return d["Delinquency Rate"] != 'High Risk' && _.includes(topNames, d.Industry + ',' + d.Vertical)
     })
     .groupBy(function(d) { return [d.Industry, d.Vertical] })
     .mapValues(function(d) {
