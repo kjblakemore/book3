@@ -70,6 +70,7 @@
         <section id="q4" class="question">
         <h4>2. If Zayo sent quotes to all Tranzact accounts, how would you prioritize the customer account list? (And list the prioritized accounts from 1 to ####)</h4>
         <div class="answer ct-double-octave"></div>
+        </section>
       
         <section id="q3" class="question">
         <h4>3. If Zayo only had 5 representatives, which states would you prioritize for in person meetings?</h4>
@@ -256,99 +257,102 @@ function func3() {
 // If Zayo sent quotes to all Tranzact accounts, how would you prioritize the customer
 // account list? (And list the prioritized accounts from 1 to ####).
 function func4() {
-  function groupFunc(list){
-    var groups=_.groupBy(list, function(l){
-      return l["Name/ID"]
-    })
 
-    return _.mapValues(groups, function(g){
-      return _.sum(g, function(m){
-        var mrr=m["Total MRR"].replace("$", "")
+
+  function filt_func(status){
+    var with_status=[]
+    var without_status=_.filter(name_groups_pairs, function(n){
+      var length=_.filter(n[1], function(e){
+        return e["Service Status"] === status
+      })
+      if(length != 0){
+        var name={
+          name: n[0],
+          services: n[1]
+        }
+        with_status.push(name)
+        return false
+      }
+      else
+        return true
+    })
+    name_groups_pairs=without_status
+    console.log("with: ", with_status)
+    var sum_mrr=_.map(with_status, function(w){
+      var filt=_.filter(w.services, function(s){
+        return s["Service Status"] === status
+      })
+
+      var sum_m=_.sum(filt, function(f){
+        var mrr=f["Total MRR"].replace("$", "")
         mrr=mrr.replace(",", "")
         return parseFloat(mrr)
       })
+      return {
+        sum: sum_m,
+        name: w.name
+      }
+    })
+    console.log("sum: ", sum_mrr)
+
+    return _.sortBy(sum_mrr, function(s){
+      return s.sum
     })
   }
 
-  function sortFunc(objects){
-    var pairs=_.pairs(objects)
-    return _.sortBy(pairs, function(p){
-      return p[1]
-    })
-  }
-  var status_groups=_.groupBy(servicesItems, function(s){
-    return s['Service Status']
+  var name_groups=_.groupBy(servicesItems, function(s){
+    return s['Name/ID']
   })
+
+  var name_groups_pairs=_.pairs(name_groups)
+  console.log("name groups, ", name_groups_pairs)
+
+  var pend_change=filt_func("Pending Change")
   
-  var filt_pend_change=_.filter(servicesItems, function(s){
-    return s['Service Status'] === "Pending Change"
-  })
-  var pend_change_groups=groupFunc(filt_pend_change)
-  var sort_pend_change= sortFunc(pend_change_groups)
-  
-  var filt_disc=_.filter(servicesItems, function(s){
-    return s['Service Status'] === "Disconnected"
-  })
-  var filt_disc_groups=groupFunc(filt_disc)
-  var sort_filt_disc=sortFunc(filt_disc_groups)
+  console.log("pend_change", pend_change)
 
-  var filt_pend_disc=_.filter(servicesItems, function(s){
-    return s['Service Status'] === "Pending Disconnect"
-  })
-  var filt_pend_disc_groups=groupFunc(filt_pend_disc)
-  var sort_pend_disc=sortFunc(filt_pend_disc_groups)
+  var disc=filt_func("Disconnected")
+  console.log("disc", disc)
 
-  var filt_active=_.filter(servicesItems, function(s){
-    return s['Service Status'] === "Active"
-  })
-  var filt_active_groups=groupFunc(filt_active)
-  var sort_active=sortFunc(filt_active_groups)
+  var pend_disc=filt_func("Pending Disconnect")
 
-  var filt_bill=_.filter(servicesItems, function(s){
-    return s['Service Status'] === "Billed"
-  })
-  var filt_bill_groups=groupFunc(filt_bill)
-  var sort_bill=sortFunc(filt_bill_groups)
+  var active=filt_func("Active")
 
-  var filt_partial_inst=_.filter(servicesItems, function(s){
-    return s['Service Status'] === "Partial Install"
-  })
-  var filt_partial_inst_groups=groupFunc(filt_partial_inst)
-  var sort_partial_inst=sortFunc(filt_partial_inst_groups)
+  var bill=filt_func("Billed")
+
+  var partial_install=filt_func("Partial Install")
 
   var sorts=[]
-  sorts=sorts.concat(sort_pend_change)
-  sorts=sorts.concat(sort_filt_disc)
-  sorts=sorts.concat(sort_pend_disc)
-  sorts=sorts.concat(sort_active)
-  sorts=sorts.concat(sort_bill)
-  sorts=sorts.concat(sort_partial_inst)
- 
- /* Uncomment to generate new table
-  var title = '<p><b>Prioritized Customers</b></p>'
+  sorts=sorts.concat(pend_change)
+  sorts=sorts.concat(disc)
+  sorts=sorts.concat(pend_disc)
+  sorts=sorts.concat(active)
+  sorts=sorts.concat(bill)
+  sorts=sorts.concat(partial_install)
+
+/* Uncomment to generate new table
+  var title = '<p><b>Prioritized Accounts</b></p>'
   var headers = '<tr><th>Customer</th><th>Rank</th></tr>'
   var entries = ''
   _.forEach(sorts, function(s, i){
-    entries += '<tr><td>' + s[0] + '</td><td>' + (i+1) + '</td></tr>'
+    entries += '<tr><td>' + s.name + '</td><td>' + (i+1) + '</td></tr>'
   })
 
   var result = title + '<table style="width:20%">' + headers + entries + '</table>'
-  */
+*/
 
-  // Comment this line, when generating new table.
+// Comment following line, when generating new table.
   var result = '<br><a href="q4.pdf">Display Accounts</a>'
 
-  var text = 'There are six different statuses: Pending Change, Disconnected, Pending Disconnect, Active Billed, Partial Install. I grouped customers by the six statuses.' + 
-    'I assumed customers might want to change their services under the "pending change", "disconnected"  and "pending disconnected" statuses.' +
-    'Therefore, I put customers in these three groups on the top of the priority (the sequence is like what I show above).' +
-    'And in each group, I sort customers by "total MRR", and the sequence is ascending, which means the customer with lower MRR might want to change their services more than the ones with higher MRR.'
+  var text = 'There are six different statuses: Pending Change, Disconnected, Pending Disconnect, Active Billed, Partial Install. I grouped customers by the six statuses. I assumed customers might want to change their services under the "pending change", "disconnected"  and "pending disconnected" statuses.  Therefore, I put customers in these three groups on the top of the priority (the sequence is like what I show above).  And in each group, I sort customers by "total MRR", and the sequence is ascending, which means the customer with lower MRR might want to change their services more than the ones with higher MRR.'
 
   return text + result
 }
 
+
 // Of the Tranzact accounts without services: How would you prioritize which accounts to
 // go after first and which products would they potentially buy?
-// Accounts with the highest Prior Year Revenue from the top three industry/sector pairs, 
+// Accounts with the highest Prior Year Revenue from the top industry/sector pairs, 
 // ranked by average MRR are selected.  To these potential customers, we recommend products 
 // that are used by current accounts in the top-ranking industry/sector pairs.
 function func5() { 
